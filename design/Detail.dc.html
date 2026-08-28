@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+    a { color: #56b6c2; text-decoration: none; }
+    a:hover { color: #7ec9d3; }
+  </style>
+</helmet>
+
+<div style="font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif; background: #1a1d23; color: #c9d1d9; min-height: 1080px;">
+
+  <!-- 顶栏 -->
+  <div style="display: flex; align-items: center; gap: 28px; padding: 14px 40px; border-bottom: 1px solid #30363d; background: #191c22;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#56b6c2" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/>
+      </svg>
+      <span style="font-weight: 600; letter-spacing: .3px;">AI 前沿雷达</span>
+    </div>
+    <div style="display: flex; gap: 4px; font-size: 13.5px;">
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">今日</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #1a1d23; background: #56b6c2; font-weight: 500;">开源项目</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">Startup</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">方法论</span>
+    </div>
+  </div>
+
+  <div style="max-width: 1020px; margin: 0 auto; padding: 28px 40px 60px;">
+
+    <div style="font-size:12.5px; color:#7d8590; margin-bottom:18px;">← 返回项目列表</div>
+
+    <!-- 头部 -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:24px;">
+      <div style="min-width:0;">
+        <h1 style="margin:0 0 8px; font-size:22px; font-weight:600; font-family:'IBM Plex Mono',monospace;">langchain-ai/langgraph-swarm</h1>
+        <p style="margin:0 0 12px; font-size:13.5px; color:#7d8590; max-width:640px; line-height:1.6;">去中心化的多智能体编排框架，支持 agent 间共享状态与消息路由，主打「一个周末复刻不掉」的编排层。</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <span style="font-size:11px; color:#56b6c2; background:rgba(86,182,194,.12); border-radius:4px; padding:2px 8px;">Agent 框架</span>
+          <span style="font-size:11px; color:#7d8590; border:1px solid #30363d; border-radius:4px; padding:2px 8px;">多 agent 编排</span>
+          <span style="font-size:11px; color:#7d8590; border:1px solid #30363d; border-radius:4px; padding:2px 8px;">英文</span>
+          <span style="font-size:11px; color:#e3b341; border:1px solid rgba(227,179,65,.4); border-radius:4px; padding:2px 8px;">🔥 爆发</span>
+          <span style="font-size:11px; color:#98c379; background:rgba(152,195,121,.12); border-radius:4px; padding:2px 8px;">✓ 跑通</span>
+        </div>
+      </div>
+      <div style="flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:5px;">
+        <div style="width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(227,179,65,.14); border:2px solid #e3b341; color:#e3b341; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:21px;">87</div>
+        <span style="font-size:10px; color:#7d8590;">综合评分</span>
+      </div>
+    </div>
+
+    <!-- 信号条 -->
+    <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:24px;">
+      <div style="padding:12px 14px; background:#22272e; border:1px solid #30363d; border-radius:9px;"><div style="font-size:10.5px; color:#7d8590;">Stars</div><div style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#c9d1d9; margin-top:2px;">1,240</div></div>
+      <div style="padding:12px 14px; background:#22272e; border:1px solid #30363d; border-radius:9px;"><div style="font-size:10.5px; color:#7d8590;">7日速度</div><div style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#e3b341; margin-top:2px;">48/天</div></div>
+      <div style="padding:12px 14px; background:#22272e; border:1px solid #30363d; border-radius:9px;"><div style="font-size:10.5px; color:#7d8590;">相对增长</div><div style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#e3b341; margin-top:2px;">280%</div></div>
+      <div style="padding:12px 14px; background:#22272e; border:1px solid #30363d; border-radius:9px;"><div style="font-size:10.5px; color:#7d8590;">跨源印证</div><div style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#c9d1d9; margin-top:2px;">3 源</div></div>
+    </div>
+
+    <!-- 评估 + 趋势 -->
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:16px;">
+      <div style="padding:18px 20px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+        <h2 style="margin:0 0 12px; font-size:14px; font-weight:600;">LLM 潜力评估</h2>
+        <p style="margin:0; font-size:13px; color:#c9d1d9; line-height:1.7;">增长曲线在加速、HN 与 Reddit 都有真实迁移证据，编排抽象比现有方案更薄。若维护节奏保持，有机会成为多 agent 编排的默认选择之一。</p>
+        <div style="margin-top:8px; font-size:11.5px; color:#7d8590;">类比：类似 LangGraph 但更去中心化</div>
+        <div style="display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-top:16px;">
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:4px; font-family:'IBM Plex Mono',monospace;"><span>novelty</span><span>82</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:82%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:4px; font-family:'IBM Plex Mono',monospace;"><span>momentum</span><span>94</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:94%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:4px; font-family:'IBM Plex Mono',monospace;"><span>adoption</span><span>70</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:70%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:4px; font-family:'IBM Plex Mono',monospace;"><span>team</span><span>78</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:78%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:4px; font-family:'IBM Plex Mono',monospace;"><span>defens.</span><span>66</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:66%; border-radius:3px; background:#56b6c2;"></div></div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div style="font-size:11px; color:#7d8590; margin-bottom:5px;">风险</div>
+          <ul style="margin:0; padding-left:18px; font-size:12.5px; color:#c9d1d9; line-height:1.7;">
+            <li>赛道拥挤，差异化需靠执行速度维持</li>
+            <li>去中心化状态一致性在大规模下待验证</li>
+          </ul>
+        </div>
+        <div style="margin-top:14px; font-size:10.5px; color:#586069; font-family:'IBM Plex Mono',monospace;">provider=kimi · prompt=2026-08-28.v1</div>
+      </div>
+
+      <div style="padding:18px 20px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+        <h2 style="margin:0 0 14px; font-size:14px; font-weight:600;">Star 趋势</h2>
+        <svg viewBox="0 0 240 90" width="100%" height="90" preserveAspectRatio="none">
+          <polyline points="0,84 40,80 80,72 120,58 160,40 200,20 240,6" fill="none" stroke="#e3b341" stroke-width="2"/>
+          <polyline points="0,84 40,80 80,72 120,58 160,40 200,20 240,6 240,90 0,90" fill="rgba(227,179,65,.08)" stroke="none"/>
+        </svg>
+        <div style="margin-top:8px; font-size:11px; color:#7d8590; font-family:'IBM Plex Mono',monospace;">14 个快照 · 30 天</div>
+      </div>
+    </div>
+
+    <!-- 真实性核查 -->
+    <div style="padding:18px 20px; background:#22272e; border:1px solid #30363d; border-radius:10px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <h2 style="margin:0; font-size:14px; font-weight:600;">L2 真实性核查</h2>
+        <span style="font-size:11px; color:#98c379; background:rgba(152,195,121,.12); border-radius:5px; padding:3px 9px;">✓ 跑通</span>
+      </div>
+      <ul style="margin:0; padding-left:18px; font-size:12.5px; color:#c9d1d9; line-height:1.7;">
+        <li>quickstart 依赖完整，示例可直接运行，无充数迹象。</li>
+        <li>近 30 天 7 位独立贡献者，含 2 位知名 maintainer。</li>
+      </ul>
+      <div style="margin-top:14px; display:flex; align-items:center; gap:12px;">
+        <span style="font-size:12.5px; padding:7px 14px; border-radius:7px; background:#56b6c2; color:#1a1d23; font-weight:500;">▶ 重新做真实性核查</span>
+        <span style="font-size:11px; color:#586069;">静态核查（不执行代码）· 沙箱实跑为可选路径</span>
+      </div>
+    </div>
+
+    <!-- 跨源提及 -->
+    <div style="padding:18px 20px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+      <h2 style="margin:0 0 12px; font-size:14px; font-weight:600;">跨源提及 · 3</h2>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:12.5px;">
+          <span style="color:#56b6c2;">Show HN: langgraph-swarm — decentralized multi-agent orchestration</span>
+          <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace; flex-shrink:0;">hackernews · 212分 · 84评论</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:12.5px;">
+          <span style="color:#56b6c2;">r/LocalLLaMA: finally a swarm framework that isn't a toy</span>
+          <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace; flex-shrink:0;">reddit · 340分 · 120评论</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:12.5px;">
+          <span style="color:#56b6c2;">Product Hunt — LangGraph Swarm</span>
+          <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace; flex-shrink:0;">producthunt · 189分 · 22评论</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,47 @@
+name: Weekly Radar Ingest
+
+# 每周一 06:00 UTC 自动采集一次（也可在 Actions 页手动触发）
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write # 允许把刷新后的数据提交回仓库
+
+concurrency:
+  group: weekly-radar
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: 采集（YC + HN 实时发现 + Kimi 评估）
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          # 账号提额后可把节流调小（如 0）加速；默认 21s 压 3 RPM
+          LLM_MIN_INTERVAL_MS: ${{ secrets.LLM_MIN_INTERVAL_MS }}
+          # 供 app 调 GitHub API 用（提额度）；没配就用 Actions 内置 token
+          GITHUB_TOKEN: ${{ secrets.RADAR_GITHUB_TOKEN || github.token }}
+        run: npm run ingest
+
+      - name: 提交刷新后的数据
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add -f data/radar.db
+          git commit -m "chore(data): weekly radar refresh $(date -u +%Y-%m-%d)" || echo "无变更"
+          git push

@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+    a { color: #56b6c2; text-decoration: none; }
+    a:hover { color: #7ec9d3; }
+    .lbl { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; fill: #8b949e; }
+    .cap { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; fill: #c9d1d9; }
+  </style>
+</helmet>
+
+<div style="font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif; background: #1a1d23; color: #c9d1d9; height: 900px; position: relative; overflow: hidden;">
+
+  <!-- 顶栏 -->
+  <div style="display: flex; align-items: center; gap: 28px; padding: 14px 40px; border-bottom: 1px solid #30363d; background: #191c22; position: relative; z-index: 3;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#56b6c2" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/>
+      </svg>
+      <span style="font-weight: 600; letter-spacing: .3px;">AI 前沿雷达</span>
+    </div>
+    <div style="display: flex; gap: 4px; font-size: 13.5px;">
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">今日</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">开源项目</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #1a1d23; background: #56b6c2; font-weight: 500;">Startup</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">方法论</span>
+    </div>
+  </div>
+
+  <!-- 画布 -->
+  <svg viewBox="0 0 1280 826" width="1280" height="826" style="display:block; background: radial-gradient(circle at 55% 45%, #1e2228 0%, #16181d 100%);">
+    <!-- 连线：业务=实线青，技术=虚线灰 -->
+    <g stroke-linecap="round">
+      <!-- business (solid teal) -->
+      <g stroke="#56b6c2" stroke-opacity="0.45" stroke-width="1.4">
+        <line x1="760" y1="420" x2="900" y2="360"/>
+        <line x1="760" y1="420" x2="860" y2="520"/>
+        <line x1="900" y1="360" x2="860" y2="520"/>
+        <line x1="760" y1="420" x2="820" y2="640"/>
+        <line x1="860" y1="520" x2="940" y2="600"/>
+        <line x1="600" y1="470" x2="700" y2="560"/>
+      </g>
+      <!-- tech (dashed gray) -->
+      <g stroke="#7d8590" stroke-opacity="0.5" stroke-width="1" stroke-dasharray="4 4">
+        <line x1="900" y1="360" x2="760" y2="420"/>
+        <line x1="700" y1="560" x2="900" y2="360"/>
+        <line x1="700" y1="560" x2="760" y2="420"/>
+        <line x1="600" y1="470" x2="860" y2="520"/>
+        <line x1="640" y1="320" x2="980" y2="470"/>
+        <line x1="560" y1="360" x2="760" y2="260"/>
+        <line x1="1140" y1="360" x2="1080" y2="250"/>
+        <line x1="980" y1="470" x2="900" y2="360"/>
+      </g>
+    </g>
+
+    <!-- 节点 -->
+    <!-- 美国 teal -->
+    <g>
+      <circle cx="900" cy="360" r="12" fill="#56b6c2"/>
+      <circle cx="860" cy="520" r="11" fill="#56b6c2"/>
+      <circle cx="700" cy="560" r="12" fill="#56b6c2"/>
+      <circle cx="600" cy="470" r="11" fill="#56b6c2"/>
+      <circle cx="980" cy="470" r="9" fill="#56b6c2"/>
+      <circle cx="940" cy="600" r="8" fill="#56b6c2"/>
+      <circle cx="560" cy="360" r="8" fill="#56b6c2"/>
+      <circle cx="640" cy="320" r="9" fill="#56b6c2"/>
+      <circle cx="760" cy="260" r="8" fill="#56b6c2"/>
+    </g>
+    <!-- 中国 yellow (Manus 为 hub) -->
+    <g>
+      <circle cx="760" cy="420" r="17" fill="#e3b341"/>
+      <circle cx="820" cy="640" r="10" fill="#e3b341"/>
+    </g>
+    <!-- 日本 violet -->
+    <g>
+      <circle cx="1080" cy="250" r="10" fill="#b48ead"/>
+      <circle cx="1140" cy="360" r="7" fill="#b48ead"/>
+    </g>
+
+    <!-- 标签 -->
+    <text class="cap" x="760" y="454" text-anchor="middle">Manus</text>
+    <text class="lbl" x="900" y="386" text-anchor="middle">Sierra</text>
+    <text class="lbl" x="860" y="546" text-anchor="middle">Decagon</text>
+    <text class="lbl" x="700" y="586" text-anchor="middle">Anysphere</text>
+    <text class="lbl" x="600" y="495" text-anchor="middle">Cognition</text>
+    <text class="lbl" x="980" y="493" text-anchor="middle">GenSpark</text>
+    <text class="lbl" x="940" y="623" text-anchor="middle">Lindy</text>
+    <text class="lbl" x="560" y="383" text-anchor="middle">Adept</text>
+    <text class="lbl" x="640" y="343" text-anchor="middle">Dust</text>
+    <text class="lbl" x="760" y="283" text-anchor="middle">Imbue</text>
+    <text class="lbl" x="820" y="666" text-anchor="middle">Monica</text>
+    <text class="lbl" x="1080" y="274" text-anchor="middle">Sakana AI</text>
+    <text class="lbl" x="1140" y="381" text-anchor="middle">Kotoba</text>
+  </svg>
+
+  <!-- 浮动面板：关系图谱 -->
+  <div style="position: absolute; top: 92px; left: 32px; width: 232px; background: rgba(31,36,43,0.92); border: 1px solid #30363d; border-radius: 10px; backdrop-filter: blur(6px); z-index: 2;">
+    <div style="display:flex; align-items:center; gap:8px; padding: 14px 16px 10px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e3b341" stroke-width="1.6">
+        <circle cx="5" cy="6" r="2"/><circle cx="19" cy="8" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6.8 6.8 10.5 16 M13.4 16.8 17.4 9.4 M7 6.4 17 7.6"/>
+      </svg>
+      <span style="font-size:13.5px; font-weight:600; color:#e3b341;">关系图谱</span>
+    </div>
+    <div style="border-top:1px solid #262c34;">
+      <div style="display:flex; align-items:center; gap:8px; padding: 11px 16px; font-size:13px; color:#c9d1d9;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="#7d8590"><path d="M4 2l4 4-4 4z"/></svg> 筛选
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding: 11px 16px; font-size:13px; color:#c9d1d9; border-top:1px solid #262c34;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="#7d8590"><path d="M2 4l4 4 4-4z"/></svg> 显示
+      </div>
+      <!-- 展开的显示项 -->
+      <div style="padding: 4px 16px 12px 34px; display:flex; flex-direction:column; gap:9px;">
+        <label style="display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#7d8590;">节点大小 · 评分
+          <span style="width:28px; height:16px; border-radius:8px; background:#56b6c2; position:relative;"><span style="position:absolute; top:2px; right:2px; width:12px; height:12px; border-radius:50%; background:#1a1d23;"></span></span>
+        </label>
+        <label style="display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#7d8590;">显示标签
+          <span style="width:28px; height:16px; border-radius:8px; background:#56b6c2; position:relative;"><span style="position:absolute; top:2px; right:2px; width:12px; height:12px; border-radius:50%; background:#1a1d23;"></span></span>
+        </label>
+        <label style="display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#7d8590;">技术连线
+          <span style="width:28px; height:16px; border-radius:8px; background:#30363d; position:relative;"><span style="position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%; background:#7d8590;"></span></span>
+        </label>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding: 11px 16px; font-size:13px; color:#c9d1d9; border-top:1px solid #262c34;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="#7d8590"><path d="M4 2l4 4-4 4z"/></svg> 力学
+      </div>
+    </div>
+  </div>
+
+  <!-- 标题 + 图例（右下） -->
+  <div style="position:absolute; top:92px; right:36px; text-align:right; z-index:2;">
+    <div style="font-size:15px; font-weight:600;">Startup 关系图谱</div>
+    <div style="font-size:12px; color:#7d8590; margin-top:4px; max-width:280px;">业务领域相同连实线 · 技术栈相同连虚线</div>
+  </div>
+
+  <div style="position:absolute; bottom:26px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:22px; padding:10px 18px; background:rgba(31,36,43,0.92); border:1px solid #30363d; border-radius:10px; font-size:12px; color:#7d8590; z-index:2; backdrop-filter: blur(6px);">
+    <span style="display:flex; align-items:center; gap:7px;"><svg width="30" height="6"><line x1="0" y1="3" x2="30" y2="3" stroke="#56b6c2" stroke-width="2"/></svg> 业务领域相同</span>
+    <span style="display:flex; align-items:center; gap:7px;"><svg width="30" height="6"><line x1="0" y1="3" x2="30" y2="3" stroke="#7d8590" stroke-width="2" stroke-dasharray="3 3"/></svg> 技术栈相同</span>
+    <span style="width:1px; height:14px; background:#30363d;"></span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:#e3b341;"></span>中国</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:#56b6c2;"></span>美国</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:#b48ead;"></span>日本</span>
+    <span style="width:1px; height:14px; background:#30363d;"></span>
+    <span>节点大小 = 综合评分</span>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

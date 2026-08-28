@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+    a { color: #56b6c2; text-decoration: none; }
+    a:hover { color: #7ec9d3; }
+  </style>
+</helmet>
+
+<div style="font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif; background: #1a1d23; color: #c9d1d9; min-height: 980px;">
+
+  <!-- 顶栏 -->
+  <div style="display: flex; align-items: center; gap: 28px; padding: 14px 40px; border-bottom: 1px solid #30363d; background: #191c22;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#56b6c2" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/>
+      </svg>
+      <span style="font-weight: 600; letter-spacing: .3px;">AI 前沿雷达</span>
+    </div>
+    <div style="display: flex; gap: 4px; font-size: 13.5px;">
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">今日</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #1a1d23; background: #56b6c2; font-weight: 500;">开源项目</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">Startup</span>
+      <span style="padding: 6px 12px; border-radius: 6px; color: #7d8590;">方法论</span>
+    </div>
+  </div>
+
+  <div style="max-width: 1120px; margin: 0 auto; padding: 34px 40px 60px;">
+
+    <div style="margin-bottom: 22px;">
+      <h1 style="margin: 0 0 8px; font-size: 22px; font-weight: 600;">开源项目 Tracker</h1>
+      <p style="margin: 0; color: #7d8590; font-size: 13.5px;">按潜力评分排序（potential 0.5 + momentum 0.35 + 跨源印证 0.15）。可疑·充数已惩罚。</p>
+    </div>
+
+    <!-- 筛选 -->
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom: 22px;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; background:#56b6c2; color:#1a1d23; font-weight:500;">全部</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#e3b341;">🔥 仅爆发</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">中文</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">英文</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">Agent 框架</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">推理·部署 infra</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">RAG·检索·记忆</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">训练·微调·RL</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">评测·benchmark</span>
+        <span style="font-size:12px; padding:5px 13px; border-radius:20px; border:1px solid #30363d; color:#7d8590;">编码·开发工具</span>
+      </div>
+    </div>
+
+    <div style="font-size:12px; color:#586069; margin-bottom:14px; font-family:'IBM Plex Mono',monospace;">共 142 个项目</div>
+
+    <!-- 列表 -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <!-- row 1 -->
+      <div style="display:flex; align-items:center; gap:16px; padding:16px 18px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+        <div style="width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(227,179,65,.14); border:1.5px solid #e3b341; color:#e3b341; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px;">87</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:#c9d1d9;">langchain-ai/langgraph-swarm</span>
+            <span style="font-size:11px; color:#7d8590; font-family:'IBM Plex Mono',monospace;">★1240</span>
+            <span style="font-size:11px; color:#e3b341; border:1px solid rgba(227,179,65,.4); border-radius:4px; padding:1px 6px;">🔥 爆发</span>
+          </div>
+          <p style="margin:6px 0 8px; font-size:12.5px; color:#7d8590;">去中心化多智能体编排框架，agent 间共享状态。</p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="font-size:11px; color:#56b6c2; background:rgba(86,182,194,.12); border-radius:4px; padding:2px 7px;">Agent 框架</span>
+            <span style="font-size:11px; color:#7d8590; border:1px solid #30363d; border-radius:4px; padding:2px 7px;">英文</span>
+            <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace;">7日 48/天 · 印证 3 源</span>
+          </div>
+        </div>
+        <div style="width:150px; flex-shrink:0; display:flex; flex-direction:column; gap:7px;">
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>novelty</span><span>82</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:82%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>momentum</span><span>94</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:94%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>adoption</span><span>70</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:70%; border-radius:3px; background:#56b6c2;"></div></div></div>
+        </div>
+      </div>
+
+      <!-- row 2 -->
+      <div style="display:flex; align-items:center; gap:16px; padding:16px 18px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+        <div style="width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(86,182,194,.12); border:1.5px solid #56b6c2; color:#56b6c2; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px;">79</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:#c9d1d9;">moonshot/infer-forge</span>
+            <span style="font-size:11px; color:#7d8590; font-family:'IBM Plex Mono',monospace;">★860</span>
+          </div>
+          <p style="margin:6px 0 8px; font-size:12.5px; color:#7d8590;">轻量推理部署栈，单文件启动、兼容 OpenAI 协议。</p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="font-size:11px; color:#56b6c2; background:rgba(86,182,194,.12); border-radius:4px; padding:2px 7px;">推理·部署 infra</span>
+            <span style="font-size:11px; color:#7d8590; border:1px solid #30363d; border-radius:4px; padding:2px 7px;">中文</span>
+            <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace;">7日 33/天 · 印证 2 源</span>
+          </div>
+        </div>
+        <div style="width:150px; flex-shrink:0; display:flex; flex-direction:column; gap:7px;">
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>novelty</span><span>68</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:68%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>momentum</span><span>77</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:77%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>adoption</span><span>72</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:72%; border-radius:3px; background:#56b6c2;"></div></div></div>
+        </div>
+      </div>
+
+      <!-- row 3 - 可疑充数 -->
+      <div style="display:flex; align-items:center; gap:16px; padding:16px 18px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+        <div style="width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(125,133,144,.1); border:1.5px solid #586069; color:#7d8590; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px;">41</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:#c9d1d9;">stanford-x/mega-skills</span>
+            <span style="font-size:11px; color:#7d8590; font-family:'IBM Plex Mono',monospace;">★5960</span>
+            <span style="font-size:11px; color:#e06c75; background:rgba(224,108,117,.12); border-radius:4px; padding:1px 7px;">⚠ 可疑·充数</span>
+          </div>
+          <p style="margin:6px 0 8px; font-size:12.5px; color:#7d8590;">号称 3000+ 研究 skill，抽样多为模板复制、无法泛化。</p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="font-size:11px; color:#56b6c2; background:rgba(86,182,194,.12); border-radius:4px; padding:2px 7px;">Agent 应用·产品</span>
+            <span style="font-size:11px; color:#7d8590; border:1px solid #30363d; border-radius:4px; padding:2px 7px;">英文</span>
+            <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace;">7日 0/天 · 印证 0 源</span>
+          </div>
+        </div>
+        <div style="width:150px; flex-shrink:0; display:flex; flex-direction:column; gap:7px;">
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>novelty</span><span>30</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:30%; border-radius:3px; background:#586069;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>momentum</span><span>22</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:22%; border-radius:3px; background:#586069;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>adoption</span><span>18</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:18%; border-radius:3px; background:#586069;"></div></div></div>
+        </div>
+      </div>
+
+      <!-- row 4 -->
+      <div style="display:flex; align-items:center; gap:16px; padding:16px 18px; background:#22272e; border:1px solid #30363d; border-radius:10px;">
+        <div style="width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(86,182,194,.12); border:1.5px solid #56b6c2; color:#56b6c2; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px;">74</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:#c9d1d9;">memo-labs/memo-rag</span>
+            <span style="font-size:11px; color:#7d8590; font-family:'IBM Plex Mono',monospace;">★520</span>
+          </div>
+          <p style="margin:6px 0 8px; font-size:12.5px; color:#7d8590;">长期记忆检索栈，把对话历史做成可检索的分层记忆。</p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span style="font-size:11px; color:#56b6c2; background:rgba(86,182,194,.12); border-radius:4px; padding:2px 7px;">RAG·检索·记忆</span>
+            <span style="font-size:11px; color:#7d8590; border:1px solid #30363d; border-radius:4px; padding:2px 7px;">英文</span>
+            <span style="font-size:11px; color:#586069; font-family:'IBM Plex Mono',monospace;">7日 21/天 · 印证 2 源</span>
+          </div>
+        </div>
+        <div style="width:150px; flex-shrink:0; display:flex; flex-direction:column; gap:7px;">
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>novelty</span><span>75</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:75%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>momentum</span><span>68</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:68%; border-radius:3px; background:#56b6c2;"></div></div></div>
+          <div><div style="display:flex; justify-content:space-between; font-size:10px; color:#7d8590; margin-bottom:3px; font-family:'IBM Plex Mono',monospace;"><span>adoption</span><span>64</span></div><div style="height:5px; border-radius:3px; background:#30363d;"><div style="height:100%; width:64%; border-radius:3px; background:#56b6c2;"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

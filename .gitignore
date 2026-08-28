@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# radar data —— 提交打包好的 radar.db 供部署用，忽略 WAL/临时文件
+/data/*
+!/data/radar.db
+.env

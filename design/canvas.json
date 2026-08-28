@@ -1,0 +1,12 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "今日", "x": 0, "y": 0, "w": 1200, "h": 1220 },
+    { "file": "Graph.dc.html", "title": "关系图谱", "x": 1300, "y": 0, "w": 1280, "h": 900 },
+    { "file": "Projects.dc.html", "title": "开源项目", "x": 0, "y": 1360, "w": 1200, "h": 1020 },
+    { "file": "Detail.dc.html", "title": "项目详情", "x": 1300, "y": 1360, "w": 1120, "h": 1120 }
+  ],
+  "annotations": [
+    { "id": "dir", "x": 0, "y": -110, "w": 520, "text": "深色简约方向 · 对齐 Obsidian graph 美学：炉黑底 #1a1d23、青 #56b6c2 / 黄 #e3b341 点缀、细边 #30363d、IBM Plex Sans + Mono。四屏共用同一套 token。" }
+  ],
+  "launch": { "view": "canvas" }
+}

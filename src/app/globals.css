@@ -1,26 +1,47 @@
 @import "tailwindcss";
 
+/* ===== Moonshot 风黑白灰设计系统（全站） ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --background: #060606;
+  --card: #101010;
+  --surface-2: #161616;
+  --foreground: #ededed;
+  --muted: #8a8a8a;
+  --faint: #5f5f5f;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --accent: #ededed;         /* 主色 = 近白，链接/强调 */
+  --accent-soft: rgba(255, 255, 255, 0.06);
+  --brand: #5ea9ff;          /* 品牌强调色（科技蓝），点缀用 */
+  --brand-soft: rgba(94, 169, 255, 0.12);
+  --silver: linear-gradient(140deg, #cfd3d9 0%, #a7abb2 100%); /* 低饱和银 */
+  --good: #ededed;           /* 高分 / 跑通 = 亮白 */
+  --warn: #b8b8b8;           /* 中分 = 中灰 */
+  --bad: #7f7f7f;            /* 低分 / 可疑 = 暗灰 */
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-card: var(--card);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, -apple-system,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+a { color: inherit; }
+
+/* 细腻的滚动条，配合深色 */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }

@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+    a { color: #d8d8d8; text-decoration: none; }
+    a:hover { color: #fff; }
+    .lbl { font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 11px; fill: #6b6b6b; letter-spacing: .2px; }
+    .lbl-hub { font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 12.5px; fill: #ededed; letter-spacing: .2px; }
+    .row { display:flex; align-items:center; justify-content:space-between; padding: 10px 0; }
+    .cap { font-size: 12px; color: #6b6b6b; }
+    .val { font-size: 12px; color: #b8b8b8; }
+  </style>
+</helmet>
+
+<div style="font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; background: #060606; color: #ededed; width: 1440px; height: 900px; position: relative; overflow: hidden;">
+
+  <!-- 画布 + 中心柔光 -->
+  <svg viewBox="0 0 1440 900" width="1440" height="900" style="display:block; position:absolute; inset:0;">
+    <defs>
+      <radialGradient id="vign" cx="50%" cy="44%" r="62%">
+        <stop offset="0%" stop-color="#161616"/>
+        <stop offset="55%" stop-color="#0b0b0b"/>
+        <stop offset="100%" stop-color="#050505"/>
+      </radialGradient>
+      <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+        <stop offset="45%" stop-color="#ffffff" stop-opacity="0.05"/>
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect x="0" y="0" width="1440" height="900" fill="url(#vign)"/>
+
+    <!-- hub 柔光 -->
+    <circle cx="812" cy="452" r="150" fill="url(#hubGlow)"/>
+
+    <!-- 连线 -->
+    <g stroke-linecap="round">
+      <!-- business：实线，白 18% -->
+      <g stroke="#ffffff" stroke-opacity="0.16" stroke-width="1">
+        <line x1="812" y1="452" x2="968" y2="386"/>
+        <line x1="812" y1="452" x2="922" y2="560"/>
+        <line x1="968" y1="386" x2="922" y2="560"/>
+        <line x1="812" y1="452" x2="884" y2="690"/>
+        <line x1="922" y1="560" x2="1010" y2="648"/>
+        <line x1="648" y1="502" x2="756" y2="600"/>
+      </g>
+      <!-- tech：虚线，白 11% -->
+      <g stroke="#ffffff" stroke-opacity="0.11" stroke-width="1" stroke-dasharray="3 5">
+        <line x1="968" y1="386" x2="812" y2="452"/>
+        <line x1="756" y1="600" x2="968" y2="386"/>
+        <line x1="756" y1="600" x2="812" y2="452"/>
+        <line x1="648" y1="502" x2="922" y2="560"/>
+        <line x1="688" y1="344" x2="1052" y2="500"/>
+        <line x1="600" y1="384" x2="812" y2="276"/>
+        <line x1="1214" y1="384" x2="1150" y2="266"/>
+        <line x1="1052" y1="500" x2="968" y2="386"/>
+      </g>
+    </g>
+
+    <!-- 节点：灰阶区分地域 -->
+    <!-- 美国 = 亮白 -->
+    <g fill="#ececec">
+      <circle cx="968" cy="386" r="7"/>
+      <circle cx="922" cy="560" r="6.5"/>
+      <circle cx="756" cy="600" r="7"/>
+      <circle cx="648" cy="502" r="6.5"/>
+      <circle cx="1052" cy="500" r="5.5"/>
+      <circle cx="1010" cy="648" r="5"/>
+      <circle cx="600" cy="384" r="5"/>
+      <circle cx="688" cy="344" r="5.5"/>
+      <circle cx="812" cy="276" r="5"/>
+    </g>
+    <!-- 中国 = 中灰（Manus 为 hub，最大 + 白描边） -->
+    <circle cx="812" cy="452" r="13" fill="#cfcfcf" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+    <circle cx="884" cy="690" r="6" fill="#8c8c8c"/>
+    <!-- 日本 = 空心描边 -->
+    <g fill="#060606" stroke="#6f6f6f" stroke-width="1.4">
+      <circle cx="1150" cy="266" r="6"/>
+      <circle cx="1214" cy="384" r="4.6"/>
+    </g>
+
+    <!-- 标签 -->
+    <text class="lbl-hub" x="812" y="480" text-anchor="middle">Manus</text>
+    <text class="lbl" x="968" y="408" text-anchor="middle">Sierra</text>
+    <text class="lbl" x="922" y="582" text-anchor="middle">Decagon</text>
+    <text class="lbl" x="756" y="622" text-anchor="middle">Anysphere</text>
+    <text class="lbl" x="648" y="524" text-anchor="middle">Cognition</text>
+    <text class="lbl" x="1052" y="521" text-anchor="middle">GenSpark</text>
+    <text class="lbl" x="1010" y="669" text-anchor="middle">Lindy</text>
+    <text class="lbl" x="600" y="405" text-anchor="middle">Adept</text>
+    <text class="lbl" x="688" y="365" text-anchor="middle">Dust</text>
+    <text class="lbl" x="812" y="297" text-anchor="middle">Imbue</text>
+    <text class="lbl" x="884" y="712" text-anchor="middle">Monica</text>
+    <text class="lbl" x="1150" y="288" text-anchor="middle">Sakana AI</text>
+    <text class="lbl" x="1214" y="404" text-anchor="middle">Kotoba</text>
+  </svg>
+
+  <!-- 左上：标题 + 极简控制面板 -->
+  <div style="position:absolute; top:40px; left:44px; z-index:2;">
+    <div style="font-size:12px; letter-spacing:2.5px; color:#5a5a5a; text-transform:uppercase;">AI Frontier Radar</div>
+    <div style="font-size:22px; font-weight:500; color:#ededed; margin-top:6px; letter-spacing:.2px;">关系图谱</div>
+
+    <div style="width:236px; margin-top:26px;">
+      <div class="row" style="border-bottom:1px solid #ffffff12; cursor:default;">
+        <span style="font-size:13px; color:#c8c8c8;">Filters</span>
+        <svg width="9" height="9" viewBox="0 0 12 12" fill="#4a4a4a"><path d="M4 2l4 4-4 4z"/></svg>
+      </div>
+      <div class="row" style="border-bottom:1px solid #ffffff12;">
+        <span style="font-size:13px; color:#c8c8c8;">Display</span>
+        <svg width="9" height="9" viewBox="0 0 12 12" fill="#4a4a4a"><path d="M2 4l4 4 4-4z"/></svg>
+      </div>
+      <div style="padding: 6px 0 10px;">
+        <div class="row" style="padding:7px 0;"><span class="cap">节点大小 · 评分</span>
+          <span style="width:26px; height:15px; border-radius:8px; background:#ededed; position:relative;"><span style="position:absolute; top:2px; right:2px; width:11px; height:11px; border-radius:50%; background:#060606;"></span></span></span>
+        </div>
+        <div class="row" style="padding:7px 0;"><span class="cap">显示标签</span>
+          <span style="width:26px; height:15px; border-radius:8px; background:#ededed; position:relative;"><span style="position:absolute; top:2px; right:2px; width:11px; height:11px; border-radius:50%; background:#060606;"></span></span>
+        </div>
+        <div class="row" style="padding:7px 0;"><span class="cap">技术连线</span>
+          <span style="width:26px; height:15px; border-radius:8px; background:#2b2b2b; position:relative;"><span style="position:absolute; top:2px; left:2px; width:11px; height:11px; border-radius:50%; background:#6f6f6f;"></span></span>
+        </div>
+      </div>
+      <div class="row" style="border-top:1px solid #ffffff12; border-bottom:1px solid #ffffff12;">
+        <span style="font-size:13px; color:#c8c8c8;">Forces</span>
+        <svg width="9" height="9" viewBox="0 0 12 12" fill="#4a4a4a"><path d="M4 2l4 4-4 4z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右上：说明 -->
+  <div style="position:absolute; top:44px; right:48px; text-align:right; z-index:2; max-width:300px;">
+    <div style="font-size:13px; color:#8a8a8a; line-height:1.7;">选中评分 Top 12 的 Agent 公司。<br>业务领域相同连实线 · 技术栈相同连虚线。</div>
+  </div>
+
+  <!-- 底部图例 -->
+  <div style="position:absolute; bottom:34px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:26px; z-index:2; font-size:12px; color:#6b6b6b;">
+    <span style="display:flex; align-items:center; gap:8px;"><svg width="30" height="6"><line x1="0" y1="3" x2="30" y2="3" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.4"/></svg> 业务领域相同</span>
+    <span style="display:flex; align-items:center; gap:8px;"><svg width="30" height="6"><line x1="0" y1="3" x2="30" y2="3" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.4" stroke-dasharray="3 4"/></svg> 技术栈相同</span>
+    <span style="width:1px; height:13px; background:#ffffff14;"></span>
+    <span style="display:flex; align-items:center; gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#ececec;"></span>美国</span>
+    <span style="display:flex; align-items:center; gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#8c8c8c;"></span>中国</span>
+    <span style="display:flex; align-items:center; gap:7px;"><span style="width:9px;height:9px;border-radius:50%;border:1.4px solid #6f6f6f; background:#060606;"></span>日本</span>
+    <span style="width:1px; height:13px; background:#ffffff14;"></span>
+    <span>节点大小 = 综合评分</span>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# Render 一键部署蓝图（Blueprint）。
+# 用法：GitHub 推上去 → render.com → New → Blueprint → 选这个仓库 → 填 secret → Create。
+# 跑普通 Node server，better-sqlite3 原生可用（不像 Vercel serverless 只读）；写库功能全保留。
+services:
+  - type: web
+    name: ai-frontier-radar
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # 判断层（Kimi），填自己的 key
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://api.moonshot.ai/v1
+      - key: LLM_MODEL
+        value: kimi-k2.6
+      # GitHub API 提额（M1 采集用）
+      - key: GITHUB_TOKEN
+        sync: false
+      # Copilot 联网搜索（Tavily 优先，可不填）
+      - key: TAVILY_API_KEY
+        sync: false
+      # 可选：飞书 / 企业微信推送 webhook
+      - key: FEISHU_WEBHOOK
+        sync: false
+      - key: WECOM_WEBHOOK
+        sync: false
