@@ -9,11 +9,11 @@ export function hashColor(k: string): string {
 
 export function Stat({ n, label, color = BRAND }: { n: number; label: string; color?: string }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
-      <div className="text-2xl font-bold tabular-nums" style={{ color }}>
+    <div className="flex flex-col items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-5 text-center">
+      <div className="text-5xl font-bold leading-none tabular-nums" style={{ color }}>
         {n}
       </div>
-      <div className="mt-0.5 text-xs text-[var(--muted)]">{label}</div>
+      <div className="mt-2 text-xs text-[var(--muted)]">{label}</div>
     </div>
   );
 }

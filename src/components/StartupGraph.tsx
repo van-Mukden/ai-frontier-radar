@@ -70,6 +70,13 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
         .linkColor((l: GLink) => (l.kind === "business" ? BUSINESS_COLOR : TECH_COLOR))
         .linkLineDash((l: GLink) => (l.kind === "tech" ? [3, 3] : null))
         .linkWidth((l: GLink) => (l.kind === "business" ? 1.8 : 1))
+        .linkLabel(
+          (l: GLink) =>
+            `<div style="font-size:12px;line-height:1.5;max-width:220px">
+               <b>${l.kind === "business" ? "业务领域相同" : "技术栈相同"}</b><br/>
+               <span style="color:#9aa">${l.kind === "business" ? "领域" : "共享技术栈"}：</span>${l.label || "-"}
+             </div>`
+        )
         .linkDirectionalParticles(0)
         .nodeCanvasObject((node: GNode, ctx: CanvasRenderingContext2D, scale: number) => {
           const r = 2 + node.score / 22;
@@ -95,6 +102,7 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
           ctx.fillStyle = "#6b6b6b";
           ctx.fillText(node.name, cx, cy + r + 2);
         })
+        .linkHoverPrecision(6)
         .cooldownTicks(120);
 
       // 力度写死为最大（最疏朗布局）
