@@ -13,6 +13,22 @@ export class MockProvider implements LLMProvider {
     const last = [...args.messages].reverse().find((m) => m.role === "user")?.content ?? "";
     const sys = args.messages.find((m) => m.role === "system")?.content ?? "";
 
+    // 周报撰写（离线 mock 版）
+    if (sys.includes("情报编辑") || sys.includes("周报")) {
+      const names = [...last.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g)].map((m) => `[${m[1]}](${m[2]})`);
+      const line = (a: string[]) => a.map((n) => `**${n}**`).join("、");
+      const repoNames = names.slice(0, 3);
+      const startNames = names.slice(3, 6);
+      const dateM = sys.match(/周报 · ([\d-]+)/)?.[1] ?? new Date().toISOString().slice(0, 10);
+      return `## AI 前沿周报 · ${dateM}
+
+本周开源侧仍以 Agent 框架与工程化工具为主线，创业侧编码/通用 Agent 持续吸金。（离线 mock 概述，接入 Kimi 后为真实成文）
+
+**🔧 开源项目**：${repoNames.length ? line(repoNames) + " 领跑，增长与讨论度双高，值得盯。" : "本周暂无。"}
+
+**🚀 创业公司**：${startNames.length ? line(startNames) + " 在各自赛道势能领先。" : "本周暂无。"}`;
+    }
+
     // 拟入库模式：产出一个 radar-propose 卡片（离线演示 human-in-the-loop）
     if (sys.includes('"kind":"repo"') && sys.includes("拟入库卡片")) {
       const full = last.match(/github\.com\/([\w.-]+\/[\w.-]+)/i)?.[1]?.replace(/\.git$/, "") ?? "owner/repo";

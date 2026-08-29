@@ -18,6 +18,8 @@ services:
       - key: LLM_BASE_URL
         value: https://api.moonshot.ai/v1
       - key: LLM_MODEL
+      - key: LLM_MIN_INTERVAL_MS
+        value: "0"
         value: kimi-k2.6
       # GitHub API 提额（M1 采集用）
       - key: GITHUB_TOKEN

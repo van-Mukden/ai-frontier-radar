@@ -31,19 +31,20 @@ export const RepoClassificationSchema = z.object({
 });
 export type RepoClassification = z.infer<typeof RepoClassificationSchema>;
 
+const score = z.coerce.number().catch(0).pipe(z.number().min(0).max(100));
 export const RepoAssessmentSchema = z.object({
-  potential_score: z.number().min(0).max(100),
+  potential_score: score,
   subscores: z.object({
-    novelty: z.number().min(0).max(100),
-    momentum: z.number().min(0).max(100),
-    adoption: z.number().min(0).max(100),
-    team: z.number().min(0).max(100),
-    defensibility: z.number().min(0).max(100),
+    novelty: score,
+    momentum: score,
+    adoption: score,
+    team: score,
+    defensibility: score,
   }),
-  one_liner: z.string(),
-  thesis: z.string(),
-  risks: z.array(z.string()).max(4),
-  comparable_to: z.string(),
+  one_liner: z.string().catch(""),
+  thesis: z.string().catch(""),
+  risks: z.array(z.string()).max(4).catch([]),
+  comparable_to: z.string().catch(""),
 });
 export type RepoAssessmentOut = z.infer<typeof RepoAssessmentSchema>;
 
@@ -65,23 +66,23 @@ export const HNExtractSchema = z.object({
 export type HNExtractOut = z.infer<typeof HNExtractSchema>;
 
 export const StartupAssessmentSchema = z.object({
-  potential_score: z.number().min(0).max(100),
-  agent_subcategory: z.enum(AGENT_SUBCATEGORIES),
-  tech_stack: z.array(z.enum(TECH_STACKS)).max(3),
+  potential_score: score,
+  agent_subcategory: z.enum(AGENT_SUBCATEGORIES).catch("其他"),
+  tech_stack: z.array(z.enum(TECH_STACKS)).max(3).catch([]),
   subscores: z.object({
-    team: z.number().min(0).max(100),
-    funding_signal: z.number().min(0).max(100),
-    traction: z.number().min(0).max(100),
-    market_timing: z.number().min(0).max(100),
-    moat_vs_big_labs: z.number().min(0).max(100),
+    team: score,
+    funding_signal: score,
+    traction: score,
+    market_timing: score,
+    moat_vs_big_labs: score,
   }),
   fourc: z.object({
-    company: z.string(),
-    customers: z.string(),
-    competitors: z.string(),
-    collaborators: z.string(),
+    company: z.string().catch(""),
+    customers: z.string().catch(""),
+    competitors: z.string().catch(""),
+    collaborators: z.string().catch(""),
   }),
-  thesis: z.string(),
-  risks: z.array(z.string()).max(4),
+  thesis: z.string().catch(""),
+  risks: z.array(z.string()).max(4).catch([]),
 });
 export type StartupAssessmentOut = z.infer<typeof StartupAssessmentSchema>;
