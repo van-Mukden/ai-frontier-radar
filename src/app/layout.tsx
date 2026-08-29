@@ -36,6 +36,7 @@ const nav = [
   { href: "/copilot", label: "Frontier Copilot" },
   { href: "/projects", label: "开源项目" },
   { href: "/startups", label: "Startup" },
+  { href: "/docs", label: "文档" },
   { href: "/methodology", label: "README" },
 ];
 

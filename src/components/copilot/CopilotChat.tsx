@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { MessageContent } from "./MessageContent";
-
-type Msg = { role: "user" | "assistant"; content: string };
+import {
+  loadConversations,
+  saveConversations,
+  newId,
+  titleFrom,
+  type Conversation,
+  type Msg,
+} from "@/lib/copilot/history";
 
 const SUGGESTIONS = [
   "本周 Top3 开源项目为什么上榜？",
@@ -13,6 +19,8 @@ const SUGGESTIONS = [
 ];
 
 export function CopilotChat({ initialQuery }: { initialQuery?: string }) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentId, setCurrentId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,37 +28,90 @@ export function CopilotChat({ initialQuery }: { initialQuery?: string }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const sentInitial = useRef(false);
 
-  async function send(text: string) {
-    const q = text.trim();
-    if (!q || loading) return;
-    setError(null);
-    const next: Msg[] = [...messages, { role: "user", content: q }];
-    setMessages(next);
-    setInput("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/copilot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "请求失败");
-      setMessages((m) => [...m, { role: "assistant", content: data.answer ?? "" }]);
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const persist = useCallback((id: string, msgs: Msg[]) => {
+    if (msgs.length === 0) return;
+    setConversations((prev) => {
+      const rest = prev.filter((c) => c.id !== id);
+      const conv: Conversation = { id, title: titleFrom(msgs), messages: msgs, updatedAt: Date.now() };
+      const next = [conv, ...rest];
+      saveConversations(next);
+      return next;
+    });
+  }, []);
 
+  const startNew = useCallback(() => {
+    const id = newId();
+    setCurrentId(id);
+    setMessages([]);
+    setError(null);
+    return id;
+  }, []);
+
+  const send = useCallback(
+    async (text: string, base?: Msg[]) => {
+      const q = text.trim();
+      if (!q || loading) return;
+      const id = currentId ?? startNew();
+      const history = base ?? messages;
+      const next: Msg[] = [...history, { role: "user", content: q }];
+      setMessages(next);
+      setInput("");
+      setLoading(true);
+      setError(null);
+      persist(id, next);
+      try {
+        const res = await fetch("/api/copilot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: next }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? "请求失败");
+        const withReply: Msg[] = [...next, { role: "assistant", content: data.answer ?? "" }];
+        setMessages(withReply);
+        persist(id, withReply);
+      } catch (e) {
+        setError((e as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loading, currentId, messages, persist, startNew]
+  );
+
+  // 首次加载历史；有 ?q= 则开新对话并发送，否则打开最近一条
   useEffect(() => {
+    const list = loadConversations();
+    setConversations(list);
     if (initialQuery && !sentInitial.current) {
       sentInitial.current = true;
-      send(initialQuery);
+      const id = newId();
+      setCurrentId(id);
+      setMessages([]);
+      send(initialQuery, []);
+    } else if (list.length > 0) {
+      setCurrentId(list[0].id);
+      setMessages(list[0].messages);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialQuery]);
+  }, []);
+
+  function openConversation(c: Conversation) {
+    setCurrentId(c.id);
+    setMessages(c.messages);
+    setError(null);
+    setInput("");
+  }
+
+  function deleteConversation(id: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    setConversations((prev) => {
+      const next = prev.filter((c) => c.id !== id);
+      saveConversations(next);
+      return next;
+    });
+    if (id === currentId) startNew();
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -59,58 +120,100 @@ export function CopilotChat({ initialQuery }: { initialQuery?: string }) {
   const empty = messages.length === 0 && !loading;
 
   return (
-    <div className="flex min-h-[70vh] flex-col">
-      <div className="flex-1 space-y-5">
-        {empty && (
-          <div className="pt-6">
-            <p className="text-sm text-[var(--muted)]">问点关于榜单、评分、某个项目/公司的问题，我会基于本工具的真实数据回答，需要时给图表和表格。</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => send(s)}
-                  className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {messages.map((m, i) =>
-          m.role === "user" ? (
-            <div key={i} className="flex justify-end">
-              <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-[var(--accent-soft)] px-4 py-2.5 text-sm">
-                {m.content}
-              </div>
-            </div>
-          ) : (
-            <div key={i} className="flex gap-3">
-              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--brand-soft)" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="1.7">
-                  <circle cx="12" cy="12" r="2.4" /><path d="M12 2a10 10 0 0 1 10 10" /><path d="M12 6a6 6 0 0 1 6 6" />
+    <div className="flex gap-5">
+      {/* 历史侧栏 */}
+      <aside className="hidden w-52 shrink-0 md:block">
+        <button
+          onClick={startNew}
+          className="mb-3 flex w-full items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--foreground)] transition-colors hover:bg-[var(--accent-soft)]"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          新对话
+        </button>
+        <div className="space-y-1">
+          <div className="px-1 pb-1 text-[10px] uppercase tracking-wider text-[var(--faint)]">历史记录</div>
+          {conversations.length === 0 && <div className="px-1 text-xs text-[var(--faint)]">还没有对话</div>}
+          {conversations.map((c) => (
+            <div
+              key={c.id}
+              onClick={() => openConversation(c)}
+              className={`group flex cursor-pointer items-center justify-between rounded-md px-2.5 py-1.5 text-xs transition-colors ${
+                c.id === currentId
+                  ? "bg-[var(--accent-soft)] text-[var(--foreground)]"
+                  : "text-[var(--muted)] hover:bg-[var(--accent-soft)]"
+              }`}
+            >
+              <span className="truncate">{c.title}</span>
+              <button
+                onClick={(e) => deleteConversation(c.id, e)}
+                className="ml-1 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                aria-label="删除"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
-              </div>
-              <div className="min-w-0 flex-1">
-                <MessageContent text={m.content} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      {/* 对话区 */}
+      <div className="flex min-h-[70vh] min-w-0 flex-1 flex-col">
+        <div className="flex-1 space-y-5">
+          {empty && (
+            <div className="pt-6">
+              <p className="text-sm text-[var(--muted)]">
+                问点关于榜单、评分、某个项目/公司的问题，我会基于本工具的真实数据回答，需要时给图表和表格。也可以贴 GitHub 链接让我评估并加入榜单。
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {SUGGESTIONS.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => send(s)}
+                    className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+                  >
+                    {s}
+                  </button>
+                ))}
               </div>
             </div>
-          )
-        )}
+          )}
 
-        {loading && (
-          <div className="flex items-center gap-3 text-sm text-[var(--muted)]">
-            <span className="inline-block h-2 w-2 animate-ping rounded-full bg-[var(--brand)]" />
-            Copilot 正在思考…（低 RPM 账号可能稍慢）
-          </div>
-        )}
-        {error && <div className="text-sm text-[#e06c75]">出错了：{error}</div>}
-        <div ref={bottomRef} />
-      </div>
+          {messages.map((m, i) =>
+            m.role === "user" ? (
+              <div key={i} className="flex justify-end">
+                <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-[var(--accent-soft)] px-4 py-2.5 text-sm">{m.content}</div>
+              </div>
+            ) : (
+              <div key={i} className="flex gap-3">
+                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--brand-soft)" }}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="1.7">
+                    <circle cx="12" cy="12" r="2.4" /><path d="M12 2a10 10 0 0 1 10 10" /><path d="M12 6a6 6 0 0 1 6 6" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <MessageContent text={m.content} />
+                </div>
+              </div>
+            )
+          )}
 
-      <div className="sticky bottom-4 mt-6">
-        <ChatInput value={input} onChange={setInput} onSend={() => send(input)} disabled={loading} />
+          {loading && (
+            <div className="flex items-center gap-3 text-sm text-[var(--muted)]">
+              <span className="inline-block h-2 w-2 animate-ping rounded-full bg-[var(--brand)]" />
+              Copilot 正在思考…（低 RPM 账号可能稍慢）
+            </div>
+          )}
+          {error && <div className="text-sm text-[#e06c75]">出错了：{error}</div>}
+          <div ref={bottomRef} />
+        </div>
+
+        <div className="sticky bottom-4 mt-6">
+          <ChatInput value={input} onChange={setInput} onSend={() => send(input)} disabled={loading} />
+        </div>
       </div>
     </div>
   );
@@ -128,7 +231,14 @@ function ChatInput({
   disabled: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 shadow-lg">
+    <div
+      className="rounded-2xl border p-4"
+      style={{
+        background: "#2e343d",
+        borderColor: "rgba(94,169,255,0.35)",
+        boxShadow: "0 0 0 1px rgba(94,169,255,0.12), 0 10px 40px -10px rgba(94,169,255,0.22)",
+      }}
+    >
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -140,7 +250,7 @@ function ChatInput({
         }}
         rows={2}
         placeholder="Ask anything, or task an agent…"
-        className="w-full resize-none bg-transparent px-1 text-sm outline-none placeholder:text-[var(--faint)]"
+        className="w-full resize-none bg-transparent px-1 text-sm text-white outline-none placeholder:text-white"
       />
       <div className="flex items-center justify-between px-1">
         <span className="text-[11px] text-[var(--faint)]">Kimi · 基于雷达真实数据</span>

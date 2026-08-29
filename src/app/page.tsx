@@ -40,8 +40,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Copilot 对话入口（hero 下 / 周报上） */}
-      <section>
+      {/* Copilot 对话入口（hero 下 / 周报上），70% 居中 */}
+      <section className="mx-auto w-full sm:w-[70%]">
+        <h2
+          className="mb-3 text-center text-lg font-semibold"
+          style={{ color: "var(--brand)" }}
+        >
+          Frontier Copilot
+        </h2>
         <CopilotEntry />
       </section>
 

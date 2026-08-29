@@ -14,7 +14,14 @@ export function CopilotEntry() {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 transition-colors focus-within:border-[var(--border-strong)]">
+    <div
+      className="rounded-2xl border px-5 py-5 transition-all focus-within:-translate-y-px"
+      style={{
+        background: "#2e343d",
+        borderColor: "rgba(94,169,255,0.35)",
+        boxShadow: "0 0 0 1px rgba(94,169,255,0.12), 0 10px 40px -10px rgba(94,169,255,0.22)",
+      }}
+    >
       <textarea
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -24,9 +31,9 @@ export function CopilotEntry() {
             go();
           }
         }}
-        rows={1}
+        rows={2}
         placeholder="Ask anything, or task an agent…"
-        className="w-full resize-none bg-transparent px-1 pt-1 text-sm outline-none placeholder:text-[var(--faint)]"
+        className="w-full resize-none bg-transparent px-1 pt-1 text-sm text-white outline-none placeholder:text-white"
       />
       <div className="mt-1 flex items-center justify-between px-1">
         <span className="flex items-center gap-1.5 text-[11px] text-[var(--faint)]">
