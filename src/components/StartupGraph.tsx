@@ -41,6 +41,15 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
       // 按当前控件过滤：地域隐藏 + 潜力得分门槛 → 连带删边；技术连线开关
       const nodes = data.nodes.filter((n) => !hidden[n.region ?? ""] && n.score >= minScore);
       const ids = new Set(nodes.map((n) => n.id));
+
+      // 节点半径：把当前可见节点的分数区间线性拉伸到 [3.5, 11]，让大小差异明显
+      const scores = nodes.map((n) => n.score);
+      const minS = scores.length ? Math.min(...scores) : 0;
+      const maxS = scores.length ? Math.max(...scores) : 1;
+      const radiusOf = (s: number) => {
+        const t = maxS > minS ? (s - minS) / (maxS - minS) : 0.5;
+        return 3.5 + t * 7.5; // 最小 3.5 → 最大 11
+      };
       const links = data.links.filter(
         (l) =>
           ids.has(l.source as number) &&
@@ -79,7 +88,7 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
         )
         .linkDirectionalParticles(0)
         .nodeCanvasObject((node: GNode, ctx: CanvasRenderingContext2D, scale: number) => {
-          const r = 2 + node.score / 22;
+          const r = radiusOf(node.score);
           const color = REGION_COLORS[node.region ?? ""] ?? "#8c8c8c";
           const cx = node.x ?? 0;
           const cy = node.y ?? 0;
@@ -101,6 +110,12 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
           ctx.textBaseline = "top";
           ctx.fillStyle = "#6b6b6b";
           ctx.fillText(node.name, cx, cy + r + 2);
+        })
+        .nodePointerAreaPaint((node: GNode, color: string, ctx: CanvasRenderingContext2D) => {
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(node.x ?? 0, node.y ?? 0, radiusOf(node.score) + 1, 0, 2 * Math.PI);
+          ctx.fill();
         })
         .linkHoverPrecision(6)
         .cooldownTicks(120);

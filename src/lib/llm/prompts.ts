@@ -75,6 +75,8 @@ export function startupAssessPrompt(input: {
     `<<TASK:startup_assess>>你是 AI 赛道的早期投资分析师，只看 Agent 方向、地域限中国/美国/日本。` +
     `只输出 JSON。给出研报式 4C（Company/Customers/Competitors/Collaborators），每段 1-3 句中文。` +
     `评分维度：team、funding_signal、traction、market_timing、moat_vs_big_labs。` +
+    `【重要】potential_score 与所有 subscores 一律用 0-100 的整数打分（0-100 scale，不是 0-10）；` +
+    `信息很少时按同类公司的合理先验给分，不要因为材料短就压到接近 0。` +
     `agent_subcategory 从固定枚举选：${AGENT_SUBCATEGORIES.join(" / ")}。` +
     `tech_stack 从固定枚举里选 1-3 个技术栈标签（判断这家公司底层技术路线）：${TECH_STACKS.join(" / ")}。`;
   const user = `公司：${input.name}

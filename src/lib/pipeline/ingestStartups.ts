@@ -30,6 +30,27 @@ function roundVelocityScore(rounds: { date: string | null; amount_usd: number | 
 
 const norm = (s: string) => s.toLowerCase().replace(/\s+|[.,/#!$%^&*;:{}=\-_`~()]/g, "");
 
+/**
+ * 修正偶发的「0-10 量表」打分：模型个别时候把 potential/subscores 打成个位数（本意 0-100）。
+ * 若某次评估的 potential 与全部 subscores 都 ≤ 10，判定为用错量表，整体 ×10（封顶 100）。
+ * 保守起见只在「全部都 ≤10」时触发，避免误伤真实的低分项。
+ */
+function normalizeScale(assess: {
+  potential_score: number;
+  subscores: Record<string, number>;
+}): boolean {
+  const all = [assess.potential_score, ...Object.values(assess.subscores)];
+  const maxV = Math.max(...all);
+  if (maxV > 0 && maxV <= 10) {
+    assess.potential_score = Math.min(100, Math.round(assess.potential_score * 10));
+    for (const k of Object.keys(assess.subscores)) {
+      assess.subscores[k] = Math.min(100, Math.round(assess.subscores[k] * 10));
+    }
+    return true;
+  }
+  return false;
+}
+
 /** 限并发地跑一批异步任务（高 RPM 账号下大幅加速）。 */
 async function mapPool<T>(items: T[], concurrency: number, fn: (item: T) => Promise<void>) {
   let i = 0;
@@ -96,6 +117,7 @@ export async function ingestStartups(
       }),
       schema: StartupAssessmentSchema,
     });
+    if (normalizeScale(assess)) log(`  ⚙ ${c.name}: 修正 0-10 量表打分 → 0-100`);
 
     const row = upsertStartup.get({
       name: c.name,
