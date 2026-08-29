@@ -142,6 +142,21 @@ export class MockProvider implements LLMProvider {
           : { label: "未测", evidence: ["静态核查未见明显异常（mock）"], flags: [] };
         break;
       }
+      case "news_extract": {
+        const title = args.user.match(/标题：(.+)/)?.[1] ?? "";
+        const nm = title.match(/^([一-龥A-Za-z0-9]{2,12})(?:科技|智能|完成|获)/)?.[1] ?? title.slice(0, 8);
+        out = {
+          is_agent_startup: has("agent", "智能体", "融资"),
+          name: nm,
+          region: "中国",
+          agent_subcategory: pick(["通用 agent", "编码 agent", "agent infra", "RPA 替代"], h),
+          description: title.slice(0, 40),
+          stage: has("天使") ? "天使轮" : has("a轮", "a+") ? "A轮" : "融资",
+          amount_usd_million: has("亿") ? 15 : has("千万") ? 5 : 0,
+          lead_investors: [],
+        };
+        break;
+      }
       case "hn_extract": {
         const isAgent = has("agent", "autonomous", "copilot", "assistant");
         const nameGuess = (args.user.match(/标题：(?:Launch HN|Show HN)[:：]?\s*([^\n(（—-]+)/i)?.[1] ?? "HN 项目").trim();

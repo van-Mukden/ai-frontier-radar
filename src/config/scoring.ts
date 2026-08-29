@@ -61,7 +61,7 @@ export const GRAPH = { topN: 18 };
 
 // 每周发现：每次采集拉取的候选上限。只做早期发现（YC 近期批次 + HN 发布），
 // 默认不含手写旗舰种子——那些是已知大厂，与"早期雷达"定位相悖（RADAR_INCLUDE_SEED=1 可开）。
-export const DISCOVER = { ycLimit: 24, hnLimit: 8 };
+export const DISCOVER = { ycLimit: 24, hnLimit: 8, newsLimit: 30 };
 
 // region 配色（图谱节点用）：中国红 / 美国蓝 / 日本白
 export const REGION_COLORS: Record<string, string> = {

@@ -35,6 +35,7 @@ async function main() {
     await ingestStartups({
       ycLimit: process.env.RADAR_YC_LIMIT ? Number(process.env.RADAR_YC_LIMIT) : undefined,
       hnLimit: process.env.RADAR_HN_LIMIT ? Number(process.env.RADAR_HN_LIMIT) : undefined,
+      newsLimit: process.env.RADAR_NEWS_LIMIT ? Number(process.env.RADAR_NEWS_LIMIT) : undefined,
     });
   }
 

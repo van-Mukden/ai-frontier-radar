@@ -221,9 +221,15 @@ const SOURCES: { name: string; use: string; addr: string; why: string }[] = [
   },
   {
     name: "YC 公司库",
-    use: "发现 YC 的 Agent 方向创业公司",
+    use: "发现 YC 的 Agent 方向创业公司（美国为主）",
     addr: "yc-oss.github.io/api",
     why: "社区维护、每周自动更新的 YC 全量 JSON，结构化到公司识别都不用 LLM。直接拉静态 JSON。",
+  },
+  {
+    name: "中文融资新闻",
+    use: "补中国 / 日本早期 Agent 公司（YC/HN 结构性只有美国）",
+    addr: "news.google.com/rss（中文查询）",
+    why: "免费无 key 的融资快讯 RSS → Kimi 抽取「公司/轮次/金额/是否 Agent」。境外服务器稳定；国内本地受限时可用 CHINA_NEWS_RSS 换源。",
   },
   {
     name: "Kimi（Moonshot）",

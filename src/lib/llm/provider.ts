@@ -65,6 +65,18 @@ export const HNExtractSchema = z.object({
 });
 export type HNExtractOut = z.infer<typeof HNExtractSchema>;
 
+export const NewsExtractSchema = z.object({
+  is_agent_startup: z.boolean(),
+  name: z.string().catch(""),
+  region: z.enum(["中国", "美国", "日本", "其他"]).catch("其他"),
+  agent_subcategory: z.enum(AGENT_SUBCATEGORIES).catch("其他"),
+  description: z.string().catch(""),
+  stage: z.string().catch(""),
+  amount_usd_million: z.coerce.number().catch(0),
+  lead_investors: z.array(z.string()).max(5).catch([]),
+});
+export type NewsExtractOut = z.infer<typeof NewsExtractSchema>;
+
 export const StartupAssessmentSchema = z.object({
   potential_score: score,
   agent_subcategory: z.enum(AGENT_SUBCATEGORIES).catch("其他"),

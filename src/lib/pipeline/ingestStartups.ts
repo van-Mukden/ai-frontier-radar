@@ -2,9 +2,10 @@ import { getDb } from "@/lib/db";
 import { STARTUP_SEED, type SeedStartup } from "./startupSeed";
 import { frontpageAIStories, launchShowHNCandidates } from "@/lib/sources/hackernews";
 import { fetchYCAgentStartups } from "@/lib/sources/yc";
+import { fetchChinaAgentFundingNews } from "@/lib/sources/chinaNews";
 import { getLLM, providerName } from "@/lib/llm";
-import { StartupAssessmentSchema, HNExtractSchema, PROMPT_VERSION } from "@/lib/llm/provider";
-import { startupAssessPrompt, hnExtractPrompt } from "@/lib/llm/prompts";
+import { StartupAssessmentSchema, HNExtractSchema, NewsExtractSchema, PROMPT_VERSION } from "@/lib/llm/provider";
+import { startupAssessPrompt, hnExtractPrompt, newsExtractPrompt } from "@/lib/llm/prompts";
 import { INVESTOR_TIERS, DISCOVER } from "@/config/scoring";
 
 type Round = SeedStartup["rounds"][number];
@@ -41,7 +42,7 @@ interface Candidate {
 }
 
 export async function ingestStartups(
-  opts: { log?: (s: string) => void; ycLimit?: number; hnLimit?: number } = {}
+  opts: { log?: (s: string) => void; ycLimit?: number; hnLimit?: number; newsLimit?: number } = {}
 ) {
   const log = opts.log ?? console.log;
   const db = getDb();
@@ -226,6 +227,55 @@ export async function ingestStartups(
     }
   } catch (e) {
     log(`  HN 发现失败: ${(e as Error).message.slice(0, 100)}`);
+  }
+
+  // 3.5) 中文融资新闻 → Kimi 抽取（补中国/日本早期公司，YC/HN 覆盖不到）
+  log("中文融资新闻发现…");
+  try {
+    const news = await fetchChinaAgentFundingNews();
+    let done = 0;
+    for (const item of news) {
+      if (done >= (opts.newsLimit ?? DISCOVER.newsLimit)) break;
+      try {
+        const ex = await llm.completeJSON({
+          ...newsExtractPrompt({ title: item.title, snippet: item.snippet }),
+          schema: NewsExtractSchema,
+        });
+        done++;
+        if (!ex.is_agent_startup || !ex.name) continue;
+        if (ex.region !== "中国" && ex.region !== "日本") continue; // 新闻源专门补中/日
+        if (processed.has(norm(ex.name))) continue;
+        processed.add(norm(ex.name));
+        const rounds =
+          ex.stage || ex.amount_usd_million
+            ? [
+                {
+                  stage: ex.stage || "融资",
+                  amount_usd: ex.amount_usd_million ? ex.amount_usd_million * 1e6 : null,
+                  date: new Date().toISOString().slice(0, 10),
+                  lead_investors: ex.lead_investors,
+                  source_url: item.url,
+                },
+              ]
+            : [];
+        await assessAndStore({
+          name: ex.name,
+          url: item.url,
+          region: ex.region,
+          batch: null,
+          agent_subcategory: ex.agent_subcategory,
+          description: ex.description || item.title,
+          source: "news",
+          rounds,
+        });
+        log(`  • ${ex.name} (${ex.region}) [新闻]`);
+        n++;
+      } catch (e) {
+        log(`  ✗ 新闻 "${item.title.slice(0, 30)}": ${(e as Error).message.slice(0, 80)}`);
+      }
+    }
+  } catch (e) {
+    log(`  新闻发现失败: ${(e as Error).message.slice(0, 100)}`);
   }
 
   // 4) HN AI 讨论热帖 → 增量发现池（mentions）

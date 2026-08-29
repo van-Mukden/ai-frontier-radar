@@ -220,6 +220,7 @@ function srcName(key: string): string {
   if (key === "hn") return "Hacker News";
   if (key === "curated") return "旗舰锚点";
   if (key === "copilot") return "Copilot 新增";
+  if (key === "news") return "融资新闻";
   return key;
 }
 

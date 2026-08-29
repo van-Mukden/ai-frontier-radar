@@ -102,6 +102,16 @@ export function hnExtractPrompt(input: { title: string; url: string; text: strin
   return { system, user };
 }
 
+export function newsExtractPrompt(input: { title: string; snippet: string }) {
+  const system =
+    `<<TASK:news_extract>>你从一条中文融资新闻里抽取「这是不是一家 Agent 方向的创业公司融资」。只输出 JSON。` +
+    `is_agent_startup=false 时其它可留空。region 从 {中国,美国,日本,其他} 选。` +
+    `agent_subcategory 从固定枚举选：${AGENT_SUBCATEGORIES.join(" / ")}。` +
+    `name 用干净的公司名（去掉"完成/获/融资"等）。stage 如 天使轮/Pre-A/A轮/B轮。amount_usd_million 换算成百万美元的数字（"数亿元"约取 15，"数千万"约取 5，未知填 0）。lead_investors 填领投方数组。`;
+  const user = `标题：${input.title}\n摘要：${input.snippet}\n\n输出 JSON：{"is_agent_startup","name","region","agent_subcategory","description","stage","amount_usd_million","lead_investors":[]}`;
+  return { system, user };
+}
+
 export function digestPrompt(input: { date: string; items: string }) {
   const system =
     `<<TASK:digest>>你是 AI 情报编辑，把今日榜单写成一段简洁中文早报。每条：名称 + 一句话是什么 + 为什么上榜。`;

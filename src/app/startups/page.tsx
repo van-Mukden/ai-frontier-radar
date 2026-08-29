@@ -11,6 +11,7 @@ function sourceLabel(source: string | null, batch: string | null): string {
   if (source === "yc") return `来源 · YC${batch ? " " + batch : ""}`;
   if (source === "hn") return "来源 · Hacker News";
   if (source === "curated") return "来源 · 旗舰锚点";
+  if (source === "news") return "来源 · 融资新闻";
   return source ? `来源 · ${source}` : "";
 }
 

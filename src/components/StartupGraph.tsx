@@ -15,7 +15,7 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
   const [showTech, setShowTech] = useState(true);
-  const [charge, setCharge] = useState(75);
+  const [minScore, setMinScore] = useState(0); // 只看潜力得分 ≥ 此值的公司
 
   const hiddenKey = Object.keys(hidden)
     .filter((k) => hidden[k])
@@ -38,8 +38,8 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
       const { default: ForceGraph } = await import("force-graph");
       if (cancelled || !containerRef.current) return;
 
-      // 按当前控件过滤（节点隐藏 → 连带删边；技术连线开关）
-      const nodes = data.nodes.filter((n) => !hidden[n.region ?? ""]);
+      // 按当前控件过滤：地域隐藏 + 潜力得分门槛 → 连带删边；技术连线开关
+      const nodes = data.nodes.filter((n) => !hidden[n.region ?? ""] && n.score >= minScore);
       const ids = new Set(nodes.map((n) => n.id));
       const links = data.links.filter(
         (l) =>
@@ -97,8 +97,9 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
         })
         .cooldownTicks(120);
 
+      // 力度写死为最大（最疏朗布局）
       const chargeForce = g.d3Force("charge");
-      if (chargeForce) chargeForce.strength(-charge);
+      if (chargeForce) chargeForce.strength(-130);
       // 边拉长：加大 link 距离，节点更疏朗
       const linkForce = g.d3Force("link") as { distance?: (v: number) => void } | undefined;
       if (linkForce?.distance) linkForce.distance(95);
@@ -117,7 +118,7 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
       if (ro) ro.disconnect();
       if (graph) graph._destructor();
     };
-  }, [data, hiddenKey, showTech, charge]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data, hiddenKey, showTech, minScore]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
@@ -162,14 +163,14 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
         </button>
 
         <label className="flex items-center gap-2 text-[var(--faint)]">
-          力度
+          潜力得分 ≥ <span className="w-5 tabular-nums text-[var(--foreground)]">{minScore}</span>
           <input
             type="range"
-            min={15}
-            max={110}
-            value={charge}
-            onChange={(e) => setCharge(Number(e.target.value))}
-            className="h-1 w-24 cursor-pointer accent-[var(--foreground)]"
+            min={0}
+            max={65}
+            value={minScore}
+            onChange={(e) => setMinScore(Number(e.target.value))}
+            className="h-1 w-28 cursor-pointer accent-[var(--brand)]"
           />
         </label>
       </div>
