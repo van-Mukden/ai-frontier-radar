@@ -135,25 +135,27 @@ export async function ingestStartups(
   const processed = new Set<string>();
   let n = 0;
 
-  // 1) 少量旗舰种子（非 YC 的知名公司，带真实融资口径）
-  log("旗舰种子…");
-  for (const seed of STARTUP_SEED) {
-    processed.add(norm(seed.name));
-    try {
-      await assessAndStore({
-        name: seed.name,
-        url: seed.url,
-        region: seed.region,
-        batch: null,
-        agent_subcategory: seed.agent_subcategory,
-        description: seed.description,
-        source: "curated",
-        rounds: seed.rounds,
-      });
-      log(`  • ${seed.name} (${seed.region})`);
-      n++;
-    } catch (e) {
-      log(`  ✗ ${seed.name}: ${(e as Error).message.slice(0, 100)}`);
+  // 1) 旗舰种子（默认关闭）——那些是已知大厂，与"早期雷达"定位相悖。
+  //    只有显式 RADAR_INCLUDE_SEED=1 才纳入，作参照用。
+  if (process.env.RADAR_INCLUDE_SEED === "1") {
+    log("旗舰种子（参照，已显式开启）…");
+    for (const seed of STARTUP_SEED) {
+      processed.add(norm(seed.name));
+      try {
+        await assessAndStore({
+          name: seed.name,
+          url: seed.url,
+          region: seed.region,
+          batch: null,
+          agent_subcategory: seed.agent_subcategory,
+          description: seed.description,
+          source: "curated",
+          rounds: seed.rounds,
+        });
+        n++;
+      } catch (e) {
+        log(`  ✗ ${seed.name}: ${(e as Error).message.slice(0, 100)}`);
+      }
     }
   }
 

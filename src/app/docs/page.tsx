@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui";
+import { Flow } from "@/components/dataviz";
 
 export const dynamic = "force-dynamic";
 const BRAND = "#5ea9ff";
@@ -47,6 +48,76 @@ export default function Docs() {
             </div>
           </Card>
         </div>
+
+        {/* 评分流程 flow chart */}
+        <div className="mt-4 space-y-3">
+          <Card>
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: BRAND }} /> 开源项目打分流程
+            </div>
+            <Flow
+              accent={BRAND}
+              steps={[
+                "每天扫 GitHub + Hacker News 的新项目",
+                "算「涨得快不快」：看增速和加速度，不看总 star",
+                "看被多少个平台同时讨论（跨源印证）",
+                "AI 读 README，自动分中英文 + 技术领域",
+                "AI 打潜力分：新颖度 / 势头 / 有没有人真用 / 团队 / 护城河",
+                "AI 拉代码核查真假，识别「充数」仓库并扣分",
+                "综合排名上榜 + 单列本周爆发",
+              ]}
+            />
+          </Card>
+          <Card>
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#98c379" }} /> 创业公司打分流程
+            </div>
+            <Flow
+              accent="#98c379"
+              steps={[
+                "每周扫 YC 公司库 + Hacker News 发布帖",
+                "只留中 / 美 / 日的 Agent 方向公司",
+                "AI 写研报式 4C：公司 / 客户 / 竞争 / 协作方",
+                "结合融资轮次速度 + 投资方声誉打分",
+                "综合排名上榜 + 关系图谱",
+              ]}
+            />
+          </Card>
+        </div>
+      </section>
+
+      {/* 领先信号 vs 滞后 */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">怎么算「有潜力」</h2>
+        <div className="grid gap-3 md:grid-cols-2">
+          <Card>
+            <div className="text-sm font-medium" style={{ color: "#98c379" }}>看的是「领先信号」</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--muted)]">
+              <li>涨得快不快（增长<span className="text-[var(--foreground)]">加速度</span>，不是绝对数量）</li>
+              <li>是不是同时在好几个地方被讨论</li>
+              <li>做的人 / 创始人背景硬不硬</li>
+              <li>融资一轮接一轮的节奏</li>
+            </ul>
+          </Card>
+          <Card>
+            <div className="text-sm font-medium" style={{ color: "#e06c75" }}>不迷信「滞后指标」</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--muted)]">
+              <li>绝对 star 高 —— 那是已经火过了</li>
+              <li>已经见报的大额融资 —— 早就不便宜了</li>
+              <li>名字响 / README 华丽 —— 可能是「充数」，会被核查扣分</li>
+            </ul>
+          </Card>
+        </div>
+      </section>
+
+      {/* 回测 */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">怎么证明它真的有用</h2>
+        <Card>
+          <p className="text-sm text-[var(--muted)]">
+            每个被标为「高潜」的项目 / 公司都记下日期，过几周再回头核对是不是真的起来了（star 增速、拿到新一轮融资、被收购、进入主流视野）。和「只按 star 增量排序」的朴素做法比命中率 —— 这才是这个工具的价值证明，而不是当下的分数好看。
+          </p>
+        </Card>
       </section>
 
       {/* Frontier Copilot */}

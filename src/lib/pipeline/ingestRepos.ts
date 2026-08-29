@@ -108,10 +108,12 @@ export async function ingestRepos(opts: { enrichCap?: number; log?: (s: string) 
       const gained7d = vel?.gained7d ?? 0;
       const gainedPrev7d = vel?.gainedPrev7d ?? 0;
 
+      const ageDays = Math.max(1, (Date.now() - new Date(r.created_at).getTime()) / 864e5);
       const sig = computeRepoSignals({
         stars: r.stargazers_count,
         gained7d,
         gainedPrev7d,
+        ageDays,
         corroborationCount: corroboration,
         discussionScore: hnHits.reduce((a, h) => a + h.points, 0),
       });

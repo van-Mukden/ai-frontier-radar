@@ -1,6 +1,17 @@
 import Link from "next/link";
-import { getRepoRows, getStartupRows, counts, getLatestDigest, getStartupGraph } from "@/lib/queries";
+import {
+  getRepoRows,
+  getStartupRows,
+  counts,
+  getLatestDigest,
+  getStartupGraph,
+  repoDomainCounts,
+  startupRegionCounts,
+  startupSourceCounts,
+} from "@/lib/queries";
 import { Card, ScoreBadge, Tag, AuthenticityBadge } from "@/components/ui";
+import { Stat, BarList, hashColor } from "@/components/dataviz";
+import { REGION_COLORS } from "@/config/scoring";
 import { WrenchIcon, RocketIcon, FlameIcon, SendIcon, NetworkIcon } from "@/components/icons";
 import { StartupGraph } from "@/components/StartupGraph";
 import { DotWave } from "@/components/DotWave";
@@ -40,15 +51,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Copilot 对话入口（hero 下 / 周报上），70% 居中 */}
+      {/* Copilot 对话入口（hero 下），70% 居中 */}
       <section className="mx-auto w-full sm:w-[70%]">
-        <h2
-          className="mb-3 text-center text-lg font-semibold"
-          style={{ color: "var(--brand)" }}
-        >
+        <h2 className="mb-3 text-center text-lg font-semibold" style={{ color: "var(--brand)" }}>
           Frontier Copilot
         </h2>
         <CopilotEntry />
+      </section>
+
+      {/* 本周数据面板（Copilot 下方） */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">本周数据</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          <Stat n={c.repos} label="开源项目" />
+          <Stat n={c.startups} label="创业公司" color="#98c379" />
+          <Stat n={c.breakouts} label="本周爆发" color="#e5c07b" />
+          <Stat n={c.mentions} label="跨源提及" color="#c678dd" />
+          <Stat n={c.assessed} label="已 AI 评估" color="#56b6c2" />
+        </div>
+        <div className="mt-3 grid gap-4 md:grid-cols-3">
+          <Card>
+            <div className="mb-3 text-sm font-medium">开源项目 · 领域分布</div>
+            <BarList data={repoDomainCounts().slice(0, 6)} colorOf={hashColor} />
+          </Card>
+          <Card>
+            <div className="mb-3 text-sm font-medium">创业公司 · 地域分布</div>
+            <BarList data={startupRegionCounts()} colorOf={(k) => REGION_COLORS[k] ?? "#5ea9ff"} />
+          </Card>
+          <Card>
+            <div className="mb-3 text-sm font-medium">创业公司 · 来源</div>
+            <BarList
+              data={startupSourceCounts().map((s) => ({ key: srcName(s.key), n: s.n }))}
+              colorOf={(k) => (k.includes("YC") ? "#e5c07b" : k.includes("Hacker") ? "#e06c75" : "#8a8a8a")}
+            />
+          </Card>
+        </div>
       </section>
 
       {empty && (
@@ -69,7 +106,7 @@ export default function Home() {
           <Card>
             <DigestMarkdown md={(digest.payload as { markdown?: string }).markdown ?? ""} />
             <p className="mt-3 text-[11px] text-[var(--faint)]">
-              由 Frontier Radar Agent 自动汇总，评分方法详情请参考 <Link href="/methodology" className="text-[var(--brand)] hover:underline">README</Link>
+              由 Frontier Radar Agent 自动汇总，评分方法详情请参考 <Link href="/docs" className="text-[var(--brand)] hover:underline">文档中心</Link>
             </p>
             <div className="mt-4 border-t border-[var(--border)] pt-4">
               <DigestActions markdown={(digest.payload as { markdown?: string }).markdown ?? ""} />
@@ -176,6 +213,14 @@ export default function Home() {
       )}
     </div>
   );
+}
+
+function srcName(key: string): string {
+  if (key === "yc") return "YC 公司库";
+  if (key === "hn") return "Hacker News";
+  if (key === "curated") return "旗舰锚点";
+  if (key === "copilot") return "Copilot 新增";
+  return key;
 }
 
 function DigestMarkdown({ md }: { md: string }) {

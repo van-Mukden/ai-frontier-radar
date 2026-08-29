@@ -59,8 +59,9 @@ export type TechStack = (typeof TECH_STACKS)[number];
 // 关系图谱配置
 export const GRAPH = { topN: 18 };
 
-// 每周发现：每次采集拉取的候选上限（受 LLM RPM 约束，可调）
-export const DISCOVER = { ycLimit: 15, hnLimit: 5 };
+// 每周发现：每次采集拉取的候选上限。只做早期发现（YC 近期批次 + HN 发布），
+// 默认不含手写旗舰种子——那些是已知大厂，与"早期雷达"定位相悖（RADAR_INCLUDE_SEED=1 可开）。
+export const DISCOVER = { ycLimit: 24, hnLimit: 8 };
 
 // region 配色（图谱节点用）：中国红 / 美国蓝 / 日本白
 export const REGION_COLORS: Record<string, string> = {
@@ -84,9 +85,12 @@ export const M1_WEIGHTS = {
 export const SUSPICIOUS_PENALTY = 35;
 
 // ---- 爆发标记阈值（PRD §6.3）----
+// 两条触发（任一命中即爆发）：① 相对增长快 且 绝对增量够；② 绝对速度快（不看相对）
 export const BREAKOUT = {
-  minGrowthRate: 0.5, // stars_gained_7d / max(total,50) 超过即候选
-  minAbsoluteGain7d: 40, // 绝对增量地板，过滤小仓库噪声
+  minGrowthRate: 0.2, // 一周涨 ≥20%（相对）
+  minAbsoluteGain7d: 20, // 且 7 日 ≥20 星
+  minVelocityPerDay: 8, // 或 7 日实测速度 ≥8 星/天（真实 GitHub 有时间戳时）
+  minAvgVelPerDay: 40, // 或 自创建以来日均 ≥40 星/天（年轻又高星 = 爆发；合成数据也可算）
 };
 
 // 跨源印证：算作有效提及的分数门槛（PRD §6.3 信号4）
@@ -145,11 +149,14 @@ export const INVESTOR_TIERS: Record<string, number> = {
 
 // ---- M1 候选池筛选（拉新仓库时）----
 export const M1_INGEST = {
-  // GitHub search: 近 N 天创建、star 落在早期/上升带（避开已爆发的巨型库）的 AI 仓库
+  // GitHub search: 近 N 天创建、star 落在早期/上升带的 AI 仓库
+  // maxStars 压到 2500：① 贴合"爆发前"定位；② 让 stargazer 时间戳能算出真实涨速（在 velocity starCap 内）
   createdWithinDays: 180,
   minStars: 30,
-  maxStars: 6000,
+  maxStars: 2500,
   // 自由文本 OR（GitHub 的多个 topic: 是 AND，不能用来做 OR）
   keywords: ["llm", "agent", "rag", "ai agent", "llm agent", "llmops"],
   perPage: 50,
+  // 搜索排序：在低 star 带内按 star 取"值得看"的候选，再由我们自算的 velocity 判断爆发
+  sort: "stars" as "updated" | "stars",
 };

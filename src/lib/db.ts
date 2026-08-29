@@ -15,6 +15,7 @@ export function getDb(): Database.Database {
   if (_db) return _db;
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
+  db.pragma("busy_timeout = 10000"); // 并发写时等待而非报 SQLITE_BUSY
   db.pragma("foreign_keys = ON");
   initSchema(db);
   _db = db;

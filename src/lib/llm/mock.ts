@@ -65,7 +65,7 @@ export class MockProvider implements LLMProvider {
 {"type":"bar","title":"创业公司 · 地域分布","data":[${regions}]}
 \`\`\`
 
-评分口径可参考 README。示例表格：
+评分口径可参考文档中心。示例表格：
 
 \`\`\`radar-table
 {"title":"示例","columns":["维度","权重"],"rows":[["潜力分",0.5],["势能",0.35],["跨源印证",0.15]]}

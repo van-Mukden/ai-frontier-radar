@@ -38,7 +38,7 @@ export async function searchNewAIRepos(limit = M1_INGEST.perPage): Promise<GHRep
   const q = `${orExpr} created:>${since} stars:${M1_INGEST.minStars}..${M1_INGEST.maxStars}`;
   const url = `${GH}/search/repositories?q=${encodeURIComponent(
     q
-  )}&sort=stars&order=desc&per_page=${Math.min(limit, 100)}`;
+  )}&sort=${M1_INGEST.sort}&order=desc&per_page=${Math.min(limit, 100)}`;
   const res = await fetch(url, { headers: { ...headers(), Accept: "application/vnd.github.mercy-preview+json" } });
   if (!res.ok) throw new Error(`github search ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const data = await res.json();
