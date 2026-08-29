@@ -12,7 +12,7 @@ import {
 import { Card, ScoreBadge, Tag, AuthenticityBadge } from "@/components/ui";
 import { Stat, BarList, hashColor } from "@/components/dataviz";
 import { REGION_COLORS } from "@/config/scoring";
-import { WrenchIcon, RocketIcon, FlameIcon, SendIcon, NetworkIcon } from "@/components/icons";
+import { WrenchIcon, RocketIcon, SendIcon, NetworkIcon } from "@/components/icons";
 import { StartupGraph } from "@/components/StartupGraph";
 import { DotWave } from "@/components/DotWave";
 import { DigestActions } from "@/components/DigestActions";
@@ -23,7 +23,6 @@ export const dynamic = "force-dynamic";
 export default function Home() {
   const c = counts();
   const topRepos = getRepoRows({ limit: 3 });
-  const breakouts = getRepoRows({ breakoutOnly: true, limit: 4 });
   const topStartups = getStartupRows({ limit: 3 });
   const digest = getLatestDigest();
   const graph = getStartupGraph({ topN: 12 });
@@ -130,7 +129,7 @@ export default function Home() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="truncate font-medium">{r.full_name}</span>
-                        {r.signals?.breakout_flag ? <Tag><FlameIcon /> 爆发</Tag> : null}
+                        {r.signals?.breakout_flag ? <span title="本周爆发" className="text-base leading-none">🔥</span> : null}
                       </div>
                       <p className="mt-1 line-clamp-2 text-sm text-[var(--muted)]">
                         {r.assessment?.one_liner ?? r.description}
@@ -191,26 +190,6 @@ export default function Home() {
         </section>
       )}
 
-      {breakouts.length > 0 && (
-        <section>
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold"><FlameIcon size={16} /> 本周爆发</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {breakouts.map((r) => (
-              <Link key={r.id} href={`/projects/${r.id}`}>
-                <Card className="h-full transition-shadow hover:shadow-md">
-                  <div className="truncate text-sm font-medium">{r.name}</div>
-                  <div className="mt-1 text-xs text-[var(--muted)]">
-                    +{Math.round((r.signals?.growth_rate ?? 0) * 100)}% / 7天
-                  </div>
-                  <div className="mt-2 text-xs text-[var(--muted)]">
-                    ★{r.signals?.stars} · {r.signals?.star_velocity_7d.toFixed(1)}/天
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
