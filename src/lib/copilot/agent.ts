@@ -13,13 +13,14 @@ export interface Retrieval {
 
 const REPO_RE = /github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git|\/|$)/i;
 const EVAL_RE = /评估|评一下|评一评|加入|添加|纳入|加到|收录|add to|评测|入库/i;
-const WEB_RE = /最新|最近|新闻|融资|轮|谁是|是什么|背景|团队|官网|近况|拿了|估值|收购/;
+// 需要联网的问法（含"去网上找/搜/推荐/有没有…公司"等）
+const WEB_RE = /最新|最近|新闻|融资|轮|谁是|是什么|背景|团队|官网|近况|拿了|估值|收购|网上|上网|搜一?下|搜索|找找|找一下|查一?下|查查|推荐|有没有|看看/;
 
 /** 轻量路由 + 确定性检索：按用户输入决定要不要联网 / 拉 repo，返回注入上下文。 */
 export async function retrieve(userText: string): Promise<Retrieval> {
   const repoMatch = userText.match(REPO_RE);
   const wantsEval = EVAL_RE.test(userText);
-  const bingKey = !!(process.env.TAVILY_API_KEY || process.env.BING_SEARCH_KEY);
+  const bingKey = true; // 联网始终可用（无 key 时走免费 Google News 兜底）
 
   // 1) 评估 repo：出现 github 链接（或链接 + 评估意图）
   if (repoMatch) {

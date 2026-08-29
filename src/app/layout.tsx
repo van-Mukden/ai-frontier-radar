@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main className="mx-auto max-w-6xl px-6 py-9">{children}</main>
         <footer className="mx-auto max-w-6xl px-6 py-10 text-xs text-[var(--faint)]">
-          AI 前沿雷达 · Kimi 笔试 demo · 数据来自 GitHub / Hacker News 公开 API，判断层由 Kimi 提供（无 key 时离线 mock）
+KIMI面试用DEMO - Created by 王晨宇和他租的AI们
         </footer>
       </body>
     </html>

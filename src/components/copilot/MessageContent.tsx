@@ -54,6 +54,11 @@ function inline(s: string) {
     .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" class="text-[var(--brand)] underline">$1</a>');
 }
 
+const isTableRow = (s: string) => /^\s*\|.*\|\s*$/.test(s);
+const isTableSep = (s: string) => /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(s) && s.includes("-");
+const splitCells = (s: string) =>
+  s.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
+
 function Markdown({ text }: { text: string }) {
   const lines = text.split("\n");
   const out: React.ReactNode[] = [];
@@ -70,8 +75,50 @@ function Markdown({ text }: { text: string }) {
       list = [];
     }
   };
-  for (const raw of lines) {
-    const line = raw.trimEnd();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trimEnd();
+
+    // 标准 markdown 管道表格：表头行 + 分隔行 + 若干数据行
+    if (isTableRow(line) && i + 1 < lines.length && isTableSep(lines[i + 1])) {
+      flush();
+      const header = splitCells(line);
+      const rows: string[][] = [];
+      let j = i + 2;
+      for (; j < lines.length && isTableRow(lines[j]); j++) rows.push(splitCells(lines[j]));
+      out.push(
+        <div key={out.length} className="overflow-x-auto">
+          <table className="my-1 w-full border-collapse text-xs">
+            <thead>
+              <tr>
+                {header.map((h, k) => (
+                  <th
+                    key={k}
+                    className="border-b border-[var(--border-strong)] px-2 py-1 text-left font-semibold"
+                    dangerouslySetInnerHTML={{ __html: inline(h) }}
+                  />
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, ri) => (
+                <tr key={ri}>
+                  {r.map((c, ci) => (
+                    <td
+                      key={ci}
+                      className="border-b border-[var(--border)] px-2 py-1 align-top"
+                      dangerouslySetInnerHTML={{ __html: inline(c) }}
+                    />
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      i = j - 1;
+      continue;
+    }
+
     if (/^\s*[-*]\s+/.test(line)) {
       list.push(line.replace(/^\s*[-*]\s+/, ""));
       continue;

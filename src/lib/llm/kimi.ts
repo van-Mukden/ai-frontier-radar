@@ -9,6 +9,8 @@ const MIN_INTERVAL = Number(process.env.LLM_MIN_INTERVAL_MS ?? 21000);
 let lastCallAt = 0;
 let gate: Promise<void> = Promise.resolve();
 async function throttle() {
+  // MIN_INTERVAL<=0（高 RPM 账号）：不串行化，允许并发满速
+  if (MIN_INTERVAL <= 0) return;
   const prev = gate;
   let release!: () => void;
   gate = new Promise<void>((r) => (release = r));

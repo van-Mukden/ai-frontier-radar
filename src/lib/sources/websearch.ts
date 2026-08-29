@@ -19,7 +19,26 @@ export interface WebSearchOut {
 export async function webSearch(query: string, count = 5): Promise<WebSearchOut> {
   if (process.env.TAVILY_API_KEY) return tavily(query, count);
   if (process.env.BING_SEARCH_KEY) return bing(query, count);
-  return { available: false, query, results: [], note: "未配置搜索 key（TAVILY_API_KEY 或 BING_SEARCH_KEY）" };
+  return googleNews(query, count); // 免费无 key 兜底（境外服务器稳定；国内本地受限）
+}
+
+/** 免费无 key 兜底：Google News RSS（新闻为主，够 Copilot 联网找公司/近况）。 */
+async function googleNews(query: string, count: number): Promise<WebSearchOut> {
+  try {
+    const url = `https://news.google.com/rss/search?hl=zh-CN&gl=CN&ceid=CN:zh&q=${encodeURIComponent(query)}`;
+    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 ai-frontier-radar" } });
+    if (!res.ok) return { available: false, provider: "googlenews", query, results: [], note: `News ${res.status}` };
+    const xml = await res.text();
+    const results: WebResult[] = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, count).map((m) => {
+      const b = m[1];
+      const tag = (t: string) =>
+        (b.match(new RegExp(`<${t}[^>]*>([\\s\\S]*?)</${t}>`))?.[1] ?? "").replace(/<!\[CDATA\[|\]\]>/g, "").trim();
+      return { title: tag("title"), url: tag("link"), snippet: tag("description").replace(/<[^>]+>/g, " ").slice(0, 300) };
+    });
+    return { available: results.length > 0, provider: "googlenews", query, results };
+  } catch (e) {
+    return { available: false, provider: "googlenews", query, results: [], note: (e as Error).message.slice(0, 100) };
+  }
 }
 
 // 向后兼容旧调用名

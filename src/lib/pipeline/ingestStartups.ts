@@ -30,6 +30,15 @@ function roundVelocityScore(rounds: { date: string | null; amount_usd: number | 
 
 const norm = (s: string) => s.toLowerCase().replace(/\s+|[.,/#!$%^&*;:{}=\-_`~()]/g, "");
 
+/** 限并发地跑一批异步任务（高 RPM 账号下大幅加速）。 */
+async function mapPool<T>(items: T[], concurrency: number, fn: (item: T) => Promise<void>) {
+  let i = 0;
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+    while (i < items.length) await fn(items[i++]);
+  });
+  await Promise.all(workers);
+}
+
 interface Candidate {
   name: string;
   url: string;
@@ -233,19 +242,19 @@ export async function ingestStartups(
   log("中文融资新闻发现…");
   try {
     const news = await fetchChinaAgentFundingNews();
-    let done = 0;
-    for (const item of news) {
-      if (done >= (opts.newsLimit ?? DISCOVER.newsLimit)) break;
+    const cands = news.slice(0, opts.newsLimit ?? DISCOVER.newsLimit);
+    await mapPool(cands, 6, async (item) => {
       try {
         const ex = await llm.completeJSON({
           ...newsExtractPrompt({ title: item.title, snippet: item.snippet }),
           schema: NewsExtractSchema,
+          maxTokens: 2500,
         });
-        done++;
-        if (!ex.is_agent_startup || !ex.name) continue;
-        if (ex.region !== "中国" && ex.region !== "日本") continue; // 新闻源专门补中/日
-        if (processed.has(norm(ex.name))) continue;
-        processed.add(norm(ex.name));
+        if (!ex.is_agent_startup || !ex.name) return;
+        if (ex.region !== "中国" && ex.region !== "日本") return; // 新闻源专门补中/日
+        const key = norm(ex.name);
+        if (processed.has(key)) return;
+        processed.add(key);
         const rounds =
           ex.stage || ex.amount_usd_million
             ? [
@@ -273,7 +282,7 @@ export async function ingestStartups(
       } catch (e) {
         log(`  ✗ 新闻 "${item.title.slice(0, 30)}": ${(e as Error).message.slice(0, 80)}`);
       }
-    }
+    });
   } catch (e) {
     log(`  新闻发现失败: ${(e as Error).message.slice(0, 100)}`);
   }

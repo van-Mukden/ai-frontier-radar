@@ -204,7 +204,7 @@ export function CopilotChat({ initialQuery }: { initialQuery?: string }) {
           {loading && (
             <div className="flex items-center gap-3 text-sm text-[var(--muted)]">
               <span className="inline-block h-2 w-2 animate-ping rounded-full bg-[var(--brand)]" />
-              Copilot 正在思考…（低 RPM 账号可能稍慢）
+              Copilot 正在思考…
             </div>
           )}
           {error && <div className="text-sm text-[#e06c75]">出错了：{error}</div>}
