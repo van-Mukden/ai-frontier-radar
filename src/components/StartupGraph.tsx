@@ -15,7 +15,7 @@ export function StartupGraph({ data }: { data: StartupGraphData }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
   const [showTech, setShowTech] = useState(true);
-  const [minScore, setMinScore] = useState(0); // 只看潜力得分 ≥ 此值的公司
+  const [minScore, setMinScore] = useState(30); // 默认只看潜力得分 ≥ 30 的公司
 
   const hiddenKey = Object.keys(hidden)
     .filter((k) => hidden[k])
