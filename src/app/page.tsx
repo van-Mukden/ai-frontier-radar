@@ -204,17 +204,40 @@ function srcName(key: string): string {
 }
 
 function DigestMarkdown({ md }: { md: string }) {
-  // 轻量渲染：**加粗**、[text](url)、列表
+  // 轻量渲染：标题、**加粗** 小节头、"- "/"1." 列表逐行、正文段落；每个项目/公司各占一行
+  const inline = (s: string) =>
+    s
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" class="text-[var(--accent)] underline">$1</a>');
   const lines = md.split("\n").filter((l) => l.trim());
   return (
-    <div className="space-y-1 text-sm">
+    <div className="space-y-1.5 text-sm leading-relaxed">
       {lines.map((l, i) => {
-        const html = l
-          .replace(/^#+\s*/, "")
-          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" class="text-[var(--accent)] underline">$1</a>')
-          .replace(/^_(.+)_$/, '<em class="text-[var(--muted)]">$1</em>');
-        return <p key={i} dangerouslySetInnerHTML={{ __html: html }} />;
+        const line = l.trim();
+        // 主标题
+        if (/^#\s/.test(line)) {
+          return (
+            <p key={i} className="text-[13px] font-semibold text-[var(--muted)]" dangerouslySetInnerHTML={{ __html: inline(line.replace(/^#+\s*/, "")) }} />
+          );
+        }
+        // 小节标题（整行 **...**）
+        if (/^\*\*.+\*\*$/.test(line)) {
+          return (
+            <p key={i} className="mt-2 font-semibold" dangerouslySetInnerHTML={{ __html: inline(line) }} />
+          );
+        }
+        // 列表项："- x" 或 "1. x"
+        const li = line.match(/^(?:[-*]|\d+\.)\s+(.*)/);
+        if (li) {
+          return (
+            <div key={i} className="flex gap-2 pl-1">
+              <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[var(--brand)]" />
+              <span className="min-w-0" dangerouslySetInnerHTML={{ __html: inline(li[1]) }} />
+            </div>
+          );
+        }
+        // 普通段落（研判等）
+        return <p key={i} className="text-[var(--foreground)]" dangerouslySetInnerHTML={{ __html: inline(line) }} />;
       })}
     </div>
   );

@@ -1,7 +1,19 @@
 import { getDb } from "@/lib/db";
-import { getRepoRows, getStartupRows } from "@/lib/queries";
+import { getRepoRows, getStartupRows, repoDomainCounts } from "@/lib/queries";
 import { getNotifiers, type DigestPayload } from "@/lib/notify";
 import { getLLM } from "@/lib/llm";
+
+/** 计数并排序（用于领域/子类/技术栈分布，喂给 LLM 做研判）。 */
+function tally(items: (string | null | undefined)[]): { key: string; n: number }[] {
+  const m = new Map<string, number>();
+  for (const it of items) {
+    const k = (it ?? "").trim();
+    if (k) m.set(k, (m.get(k) ?? 0) + 1);
+  }
+  return [...m.entries()].map(([key, n]) => ({ key, n })).sort((a, b) => b.n - a.n);
+}
+const fmtCounts = (arr: { key: string; n: number }[], top = 6) =>
+  arr.slice(0, top).map((x) => `${x.key}×${x.n}`).join("、") || "（暂无）";
 
 /** 生成当周 digest（Top3 开源 + Top3 startup），由 LLM 写成通顺短周报，落库并调 Notifier。 */
 export async function buildAndSendDigest(opts: { log?: (s: string) => void } = {}) {
@@ -35,15 +47,37 @@ export async function buildAndSendDigest(opts: { log?: (s: string) => void } = {
     })
     .join("\n");
 
+  // 全景事实：领域分布 / 创业子类分布 / 在用技术栈分布，供 LLM 做「走向 AGI 的 bricks / 未被满足的需求」研判
+  const landscapeStartups = getStartupRows({ limit: 40 });
+  const domainDist = fmtCounts(repoDomainCounts());
+  const subcatDist = fmtCounts(tally(landscapeStartups.map((s) => s.agent_subcategory)));
+  const stackDist = fmtCounts(tally(landscapeStartups.flatMap((s) => s.tech_stack ?? [])), 8);
+  const landscapeFacts = `开源项目领域分布：${domainDist}
+创业公司方向分布：${subcatDist}
+创业公司在用技术栈分布：${stackDist}`;
+
   let markdown = fallbackMarkdown(date, repoFacts, startupFacts);
   try {
-    const system = `你是 AI 前沿情报编辑。把本周榜单写成一段**通顺、有逻辑、简短**的中文周报（markdown）。要求：
-- 开头一句话总览本周态势（能点出方向/趋势更好）。
-- 分「🔧 开源项目」「🚀 创业公司」两小节，每个上榜项一句话：是什么 + 为什么值得关注（结合它的分数/信号），可做轻微横向对比。
-- 像一篇小快讯，不要罗列式堆砌。保留每个名称的 markdown 链接。
-- 只用给你的事实，不许编造数字。全文控制在 ~220 字。标题用 "## AI 前沿周报 · ${date}"。`;
-    const user = `本周 Top3 开源项目：\n${repoFacts || "（无）"}\n\n本周 Top3 创业公司：\n${startupFacts || "（无）"}`;
-    const out = await getLLM().chat({ messages: [{ role: "system", content: system }, { role: "user", content: user }] });
+    const system = `你是 AI 前沿情报主编，给专业读者写本周中文周报（markdown）。严格按下列结构与格式输出：
+
+## AI 前沿周报 · ${date}
+（第一行：一句话总览本周态势，点出方向/趋势）
+
+**🔧 开源项目**
+（每个项目**单独一行**，行首用 "- "，格式：- [名称](链接)（综合分x）：一句话说清是什么 + 为什么值得关注。**不要把多个项目挤在一行**。）
+
+**🚀 创业公司**
+（每家公司**单独一行**，行首用 "- "，格式同上：是什么方向 + 融资/信号 + 为什么有潜力。**一家一行**。）
+
+**🔭 本周研判**
+（一段 150–220 字的分析，必须回答三件事：① 本周火热的开源项目 + 当前流行于生产中的技术栈，正在补上哪些"走向 AGI 的 bricks"（如记忆/检索、工具与计算机操作、多 Agent 编排、后训练/RL、代码执行沙箱等，用给你的分布数据佐证）；② 这些拼图里还缺哪一块；③ 判定为有潜力的 startup 分别代表了哪些"尚未被满足的需求"。要有观点、能串成逻辑，不要复述前面的条目。）
+
+硬性要求：只用我给你的事实，不许编造数字或公司；保留所有 markdown 链接；开源/创业每一项各占一行；全文控制在 ~500 字以内。`;
+    const user = `本周 Top3 开源项目：\n${repoFacts || "（无）"}\n\n本周 Top3 创业公司：\n${startupFacts || "（无）"}\n\n全景分布（用于"研判"小节，不要逐条罗列，作为论据）：\n${landscapeFacts}`;
+    const out = await getLLM().chat({
+      messages: [{ role: "system", content: system }, { role: "user", content: user }],
+      maxTokens: 4000,
+    });
     if (out && out.trim().length > 20) markdown = out.trim();
   } catch (e) {
     log(`  周报 LLM 撰写失败，用模板兜底: ${(e as Error).message.slice(0, 80)}`);
@@ -75,6 +109,7 @@ export async function buildAndSendDigest(opts: { log?: (s: string) => void } = {
 }
 
 function fallbackMarkdown(date: string, repoFacts: string, startupFacts: string): string {
+  // repoFacts/startupFacts 已是「每行一项」，直接沿用（渲染器把 "1. "/"- " 视作列表行）
   return `## AI 前沿周报 · ${date}
 
 **🔧 本周 Top3 开源项目**

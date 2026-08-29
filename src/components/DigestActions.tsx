@@ -13,25 +13,36 @@ export function DigestActions({ markdown }: { markdown: string }) {
     setTimeout(() => setMsg(null), 2600);
   }
 
-  async function copy() {
+  async function copyText(): Promise<boolean> {
     try {
       await navigator.clipboard.writeText(markdown);
-      toast("已复制周报内容");
+      return true;
     } catch {
-      toast("复制失败，请手动选择");
+      return false;
     }
   }
 
+  async function copy() {
+    toast((await copyText()) ? "已复制周报内容" : "复制失败，请手动选择");
+  }
+
+  // 飞书 / 企业微信没有开放的免登「预填分享」链接，这里走：复制内容 → 弹窗确认 → 跳转到对应 IM 粘贴分享
+  const TARGETS: Record<"feishu" | "wecom", { name: string; url: string }> = {
+    feishu: { name: "飞书", url: "https://www.feishu.cn/messenger/" },
+    wecom: { name: "企业微信", url: "https://work.weixin.qq.com/" },
+  };
+
   async function share(target: "feishu" | "wecom") {
     setBusy(target);
-    try {
-      const res = await fetch(`/api/share?target=${target}`, { method: "POST" });
-      const data = await res.json();
-      toast(data.detail ?? (res.ok ? "已推送" : "推送失败"));
-    } catch (e) {
-      toast((e as Error).message);
-    } finally {
-      setBusy(null);
+    const t = TARGETS[target];
+    const copied = await copyText();
+    setBusy(null);
+    const ok = window.confirm(
+      `${copied ? "已复制本周周报到剪贴板。" : "复制失败，请稍后手动复制内容。"}\n点击「确定」打开${t.name}，粘贴到会话/群即可分享。`
+    );
+    if (ok) {
+      window.open(t.url, "_blank", "noopener");
+      toast(`已打开${t.name}，粘贴即可发送`);
     }
   }
 
@@ -40,11 +51,11 @@ export function DigestActions({ markdown }: { markdown: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <button className={btn} style={{ background: silver }} onClick={() => share("feishu")} disabled={busy === "feishu"}>
-        {busy === "feishu" ? "推送中…" : "分享到飞书"}
+      <button className={btn} style={{ background: silver }} onClick={() => share("feishu")} disabled={busy !== null}>
+        分享到飞书
       </button>
-      <button className={btn} style={{ background: silver }} onClick={() => share("wecom")} disabled={busy === "wecom"}>
-        {busy === "wecom" ? "推送中…" : "分享到企业微信"}
+      <button className={btn} style={{ background: silver }} onClick={() => share("wecom")} disabled={busy !== null}>
+        分享到企业微信
       </button>
       <button className={btn} style={{ background: silver }} onClick={copy}>
         复制内容
