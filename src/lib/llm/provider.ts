@@ -65,8 +65,14 @@ export const HNExtractSchema = z.object({
 });
 export type HNExtractOut = z.infer<typeof HNExtractSchema>;
 
+// 容错布尔：模型偶尔返回 "true"/"是"/1，或字段缺失；一律安全归一，避免整条丢弃
+const looseBool = z
+  .union([z.boolean(), z.string(), z.number()])
+  .transform((v) => v === true || v === 1 || v === "true" || v === "是" || v === "yes")
+  .catch(false);
+
 export const NewsExtractSchema = z.object({
-  is_agent_startup: z.boolean(),
+  is_agent_startup: looseBool,
   name: z.string().catch(""),
   region: z.enum(["中国", "美国", "日本", "其他"]).catch("其他"),
   agent_subcategory: z.enum(AGENT_SUBCATEGORIES).catch("其他"),

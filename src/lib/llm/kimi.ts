@@ -88,7 +88,7 @@ export class OpenAICompatibleProvider implements LLMProvider {
       ],
       { json: true, maxTokens: args.maxTokens }
     );
-    return args.schema.parse(JSON.parse(extractJson(content || "{}")));
+    return args.schema.parse(parseLoose(content || "{}"));
   }
 
   async chat(args: { messages: { role: string; content: string }[]; maxTokens?: number }): Promise<string> {
@@ -108,4 +108,45 @@ function extractJson(s: string): string {
   const end = t.lastIndexOf("}");
   if (start >= 0 && end > start) t = t.slice(start, end + 1);
   return t;
+}
+
+/**
+ * 稳健解析：先常规解析；失败则修复被截断的 JSON（推理模型 token 用尽时常见），
+ * 补齐未闭合的引号/括号后再解析，配合 schema 上的 .catch 恢复已完成的字段。
+ */
+function parseLoose(content: string): unknown {
+  const t = extractJson(content);
+  try {
+    return JSON.parse(t);
+  } catch {
+    return JSON.parse(repairTruncatedJson(t));
+  }
+}
+
+function repairTruncatedJson(input: string): string {
+  let inStr = false;
+  let esc = false;
+  const stack: string[] = [];
+  for (const ch of input) {
+    if (esc) {
+      esc = false;
+      continue;
+    }
+    if (ch === "\\") {
+      esc = true;
+      continue;
+    }
+    if (ch === '"') {
+      inStr = !inStr;
+      continue;
+    }
+    if (inStr) continue;
+    if (ch === "{" || ch === "[") stack.push(ch);
+    else if (ch === "}" || ch === "]") stack.pop();
+  }
+  let out = input;
+  if (inStr) out += '"'; // 收尾未闭合的字符串
+  out = out.replace(/,\s*$/, ""); // 去掉尾随逗号
+  for (let i = stack.length - 1; i >= 0; i--) out += stack[i] === "{" ? "}" : "]";
+  return out;
 }

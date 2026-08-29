@@ -248,7 +248,7 @@ export async function ingestStartups(
         const ex = await llm.completeJSON({
           ...newsExtractPrompt({ title: item.title, snippet: item.snippet }),
           schema: NewsExtractSchema,
-          maxTokens: 2500,
+          maxTokens: 6000, // k2.6 是推理模型，推理占用 token，给足额度避免 JSON 截断丢公司
         });
         if (!ex.is_agent_startup || !ex.name) return;
         if (ex.region !== "中国" && ex.region !== "日本") return; // 新闻源专门补中/日
