@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui";
 import { Flow } from "@/components/dataviz";
+import { Mermaid } from "./Mermaid";
 
 const BRAND = "#5ea9ff";
 const GREEN = "#98c379";
@@ -260,6 +261,14 @@ function Research() {
         </Card>
       </div>
 
+      <H2>Research Agent 架构</H2>
+      <p className="mb-3 text-sm text-[var(--muted)]">
+        一条离线批处理流水线：定时触发 → 双模块并行采集（M1 开源 / M2 创业）→ 领先信号 + Kimi 判断层 → 落库 → 写周报，数据提交回仓库供下次部署。
+      </p>
+      <Card>
+        <Mermaid chart={RESEARCH_ARCH} />
+      </Card>
+
       <H2>开源项目打分流程</H2>
       <Card>
         <Flow
@@ -353,22 +362,90 @@ function Copilot() {
         </Card>
       </div>
 
-      <H2 dot={GREEN}>一次问答的内部流程</H2>
+      <H2 dot={GREEN}>Copilot 架构</H2>
+      <p className="mb-3 text-sm text-[var(--muted)]">
+        从用户输入到（可选）写库的完整链路：意图路由 → 确定性检索 / 评估 → human-in-the-loop 审核 → 写库并即时重排。
+      </p>
       <Card>
-        <Flow
-          accent={GREEN}
-          steps={[
-            "轻量路由：判断是问答 / 评估 repo / 评估公司",
-            "确定性检索：按需拉库、拉 GitHub、联网搜索",
-            "把真实数据 + 评分口径注入 system prompt",
-            "Kimi 生成回答（含 radar-chart / radar-table / radar-propose 块）",
-            "前端渲染图表 / 表格 / 拟入库卡片，等你确认",
-          ]}
-        />
+        <Mermaid chart={COPILOT_ARCH} />
       </Card>
     </div>
   );
 }
+
+const COPILOT_ARCH = `flowchart TD
+  U["用户输入<br/>提问 / 粘贴 repo·公司"] --> R{"意图识别<br/>(LLM 路由)"}
+
+  R -->|工具问答| QA["问答模式"]
+  R -->|评估入库| EV["评估模式"]
+
+  QA --> TQ["tools:<br/>query_radar_db 读榜单/子分<br/>get_methodology 评分口径<br/>search_web 联网补充"]
+  TQ --> ANS["Kimi 生成回答<br/>（带来源/引用）"]
+
+  EV --> TY{"类型？"}
+  TY -->|GitHub repo| G["fetch_github_repo<br/>star速度/贡献者/README/文件树"]
+  TY -->|公司| C["search_web + fetch_company_info<br/>官网/融资/团队/地域"]
+
+  G --> DQ{"数据够不够<br/>打分？"}
+  C --> DQ
+  DQ -->|不足/存疑| ASK["向用户追问<br/>补关键字段"]
+  ASK --> DQ
+
+  DQ -->|足够| S["跑现有评分流水线<br/>信号 + Kimi 评分 + (repo)真实性核查"]
+  S --> P["生成「拟入库卡片」<br/>propose_insert(暂存, 不写库)"]
+
+  P --> H{{"Human-in-the-loop<br/>用户审核 / 编辑"}}
+  H -->|通过| W["commit_insert<br/>写入表格"]
+  H -->|再改| S
+  H -->|拒绝| X["丢弃"]
+
+  W --> DB[("radar.db<br/>repos / startups")]
+  DB -.重新排名.-> UI["榜单/图谱即时更新"]
+
+  classDef human fill:#5ea9ff22,stroke:#5ea9ff;
+  classDef write fill:#98c37922,stroke:#98c379;
+  class H human;
+  class W,DB write;`;
+
+const RESEARCH_ARCH = `flowchart TD
+  CRON["GitHub Actions<br/>每周定时触发"] --> ING["ingest 入口"]
+  ING --> M1["M1 开源项目"]
+  ING --> M2["M2 创业公司"]
+
+  subgraph SRC["数据源 · 公开/免费"]
+    GH["GitHub API<br/>+ Stargazers 星速"]
+    HN["Hacker News"]
+    YC["YC 公司库"]
+    NEWS["中文融资新闻 RSS"]
+  end
+
+  M1 --> GH
+  M1 --> HN
+  GH --> SIG["领先信号<br/>增速/加速度/跨源印证"]
+  HN --> SIG
+  SIG --> KM1["Kimi 分类+打分<br/>读 README/技术领域/真实性核查"]
+  KM1 --> SC1["综合分<br/>潜力0.5+势能0.35+印证0.15"]
+
+  M2 --> YC
+  M2 --> HN
+  M2 --> NEWS
+  YC --> EX["Kimi 抽取<br/>公司/地域/子方向/融资"]
+  HN --> EX
+  NEWS --> EX
+  EX --> RG{"只留<br/>中/美/日 Agent"}
+  RG --> KM2["Kimi 写 4C 研报 + 打分<br/>融资节奏/投资方声誉"]
+  KM2 --> SC2["综合分<br/>潜力0.6+势能0.4"]
+
+  SC1 --> DB[("radar.db")]
+  SC2 --> DB
+  DB --> DIG["Kimi 撰写周报<br/>逐项点评 + 本周研判"]
+  DIG --> OUT["落库 /digest<br/>可推飞书/企业微信"]
+  DB -.提交回仓库.-> GIT["git commit<br/>下次部署带最新数据"]
+
+  classDef llm fill:#e5c07b22,stroke:#e5c07b;
+  classDef store fill:#98c37922,stroke:#98c379;
+  class KM1,KM2,EX,DIG llm;
+  class DB,GIT,OUT store;`;
 
 /* ---------- 数据源 ---------- */
 function Sources() {
