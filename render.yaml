@@ -18,9 +18,10 @@ services:
       - key: LLM_BASE_URL
         value: https://api.moonshot.ai/v1
       - key: LLM_MODEL
+        value: kimi-k2.6
+      # LLM 限流间隔（毫秒）。Tier1+ 账号设 0 = 满速；Tier0(3RPM) 用 21000
       - key: LLM_MIN_INTERVAL_MS
         value: "0"
-        value: kimi-k2.6
       # GitHub API 提额（M1 采集用）
       - key: GITHUB_TOKEN
         sync: false
