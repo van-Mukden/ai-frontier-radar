@@ -215,7 +215,7 @@ function DigestMarkdown({ md }: { md: string }) {
       {lines.map((l, i) => {
         const line = l.trim();
         // 主标题
-        if (/^#\s/.test(line)) {
+        if (/^#{1,6}\s/.test(line)) {
           return (
             <p key={i} className="text-[13px] font-semibold text-[var(--muted)]" dangerouslySetInnerHTML={{ __html: inline(line.replace(/^#+\s*/, "")) }} />
           );

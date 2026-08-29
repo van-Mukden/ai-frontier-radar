@@ -76,7 +76,7 @@ export async function buildAndSendDigest(opts: { log?: (s: string) => void } = {
     const user = `本周 Top3 开源项目：\n${repoFacts || "（无）"}\n\n本周 Top3 创业公司：\n${startupFacts || "（无）"}\n\n全景分布（用于"研判"小节，不要逐条罗列，作为论据）：\n${landscapeFacts}`;
     const out = await getLLM().chat({
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
-      maxTokens: 4000,
+      maxTokens: 8000, // k2.6 是推理模型，推理占用 token；周报变长（逐行 + 研判），给足额度避免截断
     });
     if (out && out.trim().length > 20) markdown = out.trim();
   } catch (e) {
