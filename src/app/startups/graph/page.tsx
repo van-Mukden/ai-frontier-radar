@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getStartupGraph } from "@/lib/queries";
 import { StartupGraph } from "@/components/StartupGraph";
 import { Card, BackLink } from "@/components/ui";
-import { GRAPH } from "@/config/scoring";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +11,7 @@ export default async function StartupGraphPage({
   searchParams: Promise<{ region?: string }>;
 }) {
   const sp = await searchParams;
-  const data = getStartupGraph({ region: sp.region, topN: GRAPH.topN });
+  const data = getStartupGraph({ region: sp.region });
 
   return (
     <div className="space-y-6">
@@ -21,7 +20,7 @@ export default async function StartupGraphPage({
       <div>
         <h1 className="text-2xl font-bold">潜力 Startup 关系图谱</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          选中评分 Top {GRAPH.topN} 的 Agent 公司。<strong>业务领域相同连实线</strong>、
+          纳入全部已收录的 Agent 公司（可用「潜力得分 ≥」滑竿收敛）。<strong>业务领域相同连实线</strong>、
           <strong>技术栈相同连虚线</strong>——一眼看出谁跟谁在同一战场、谁共用同一套技术路线。
         </p>
       </div>

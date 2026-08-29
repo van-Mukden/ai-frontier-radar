@@ -25,7 +25,7 @@ export default function Home() {
   const topRepos = getRepoRows({ limit: 3 });
   const topStartups = getStartupRows({ limit: 3 });
   const digest = getLatestDigest();
-  const graph = getStartupGraph({ topN: 12 });
+  const graph = getStartupGraph();
 
   const empty = c.repos === 0;
 

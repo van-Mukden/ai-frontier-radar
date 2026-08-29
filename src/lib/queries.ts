@@ -255,7 +255,8 @@ export interface StartupGraphData {
  * 业务领域相同 → 实线(business)；技术栈有交集 → 虚线(tech)。
  */
 export function getStartupGraph(opts: { region?: string; topN?: number } = {}): StartupGraphData {
-  const rows = getStartupRows({ region: opts.region, limit: opts.topN ?? 12 });
+  // 默认纳入全部公司（topN 不传 = 全量）；节点按潜力得分过滤交给前端滑竿控制
+  const rows = getStartupRows({ region: opts.region, limit: opts.topN ?? 999 });
   const nodes: GraphNode[] = rows.map((s) => ({
     id: s.id,
     name: s.name,
